@@ -1,0 +1,11 @@
+<% if product.inventory_count? %>
+    <p><%= product.inventory_count%> adet var</p>
+<% else %>
+    <p> Stokta yok</p>
+    <p> Gelince email ile haber ver</p>
+
+    <%= form_with model: [product, Subscriber.new] do  |form| %>
+        <%= form.email_field :email, placeholder: "you@example.com", required: true %>
+        <%= form.submit "Kayıt Ol"%>
+    <%end%>
+<%end%>
