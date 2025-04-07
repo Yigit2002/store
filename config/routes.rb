@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  get 'home/index'
-  root to: 'home#index'
+  # get 'home/index'
+  # root to: 'home#index'
   resource :session
   resource :registration, only: %i[new create]
   resource :unsubscribe, only: [ :show ]
@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   resources :products do
     resources :subscribers, only: [ :create ]
   end
-  #root "products#index"
+  root "products#index"
   # get "/products", to: "products#index"
   # get "/products/new" to: "products#new"
 

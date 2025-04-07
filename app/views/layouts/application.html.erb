@@ -27,6 +27,8 @@
     <nav>
       <%= link_to "Home", root_path%>
       <%= button_to "Log Out", session_path, method: :delete if authenticated?%>
+      <%= link_to "Sign Up", new_registration_path, class: "text-blue-600-underline"%>
+      <%= Current.user&.email_address%>
     </nav>
     <main>
       <%= yield %>

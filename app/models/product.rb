@@ -15,7 +15,7 @@ class Product < ApplicationRecord
 
   def notify_subscribers
     subscribers.each do |subscriber|
-      ProductMailer.with(product: self, subscriber: subscriber).in_stock.deliver_later
+      ProductMailer.with(product: self, subscriber: subscriber).in_stock.deliver_now
     end
   end
 end
