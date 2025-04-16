@@ -1,0 +1,41 @@
+<div class="max-w-4xl mx-auto py-12 px-4">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">İletişim</h1>
+
+  <p class="text-gray-600 mb-4">
+    Bizimle iletişime geçmek için aşağıdaki bilgileri kullanabilir veya formu doldurabilirsiniz. 
+    Size en kısa sürede geri dönüş yapacağız!
+  </p>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div>
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">İletişim Bilgileri</h2>
+      <p class="text-gray-600 mb-2"><strong>E-posta:</strong> destek@heroshop.com</p>
+      <p class="text-gray-600 mb-2"><strong>Telefon:</strong> +90 312 381 08 42</p>
+      <p class="text-gray-600"><strong>Adres:</strong> Keçiören, Ankara, Türkiye</p>
+    </div>
+
+    <div>
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Bize Ulaşın</h2>
+      <%= form_with url: "#", local: true, class: "space-y-4" do |form| %>
+        <div>
+          <%= form.label :name, "Adınız", class: "block text-gray-700 font-medium mb-2" %>
+          <%= form.text_field :name, class: "w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+        </div>
+
+        <div>
+          <%= form.label :email, "E-posta", class: "block text-gray-700 font-medium mb-2" %>
+          <%= form.email_field :email, class: "w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+        </div>
+
+        <div>
+          <%= form.label :message, "Mesajınız", class: "block text-gray-700 font-medium mb-2" %>
+          <%= form.text_area :message, rows: 4, class: "w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+        </div>
+
+        <div>
+          <%= form.submit "Gönder", class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

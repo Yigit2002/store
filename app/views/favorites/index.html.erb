@@ -1,0 +1,29 @@
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-3xl font-bold text-gray-800">Favorilerim</h1>
+  <%= link_to "Tüm Ürünler", products_path, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors" %>
+</div>
+
+<% if @products.empty? %>
+  <p class="text-gray-600">Henüz favori ürününüz bulunmamaktadır.</p>
+<% else %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <% @products.each do |product| %>
+      <div class="min-w-[200px] bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
+        <% if product.featured_image.attached? %>
+          <%= image_tag product.featured_image, class: "w-48 h-32 object-cover rounded-md mb-4" %>
+        <% else %>
+          <div class="w-48 h-32 bg-gray-200 rounded-md mb-4 flex items-center justify-center">
+            <span class="text-gray-500">Fotoğraf Yok</span>
+          </div>
+        <% end %>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center"><%= product.name %></h3>
+        <p class="text-gray-600 mb-2">Kategori: <%= product.category&.name || "Kategori Yok" %></p>
+        <p class="text-gray-600 mb-4">Stok: <%= product.inventory_count %></p>
+        <div class="flex space-x-2 w-full flex-wrap">
+          <%= link_to "Ürünü Görüntüle", product_path(product), class: "bg-blue-500 text-white px-1 py-0 text-xs rounded-md hover:bg-blue-600 transition-colors max-w-[80px] truncate" %>
+          <%= button_to "Favorilerden Çıkar", favorite_path(Current.user.favorites.find_by(product: product)), method: :delete, class: "bg-red-500 text-white px-2 py-0.5 text-xs rounded-md hover:bg-red-600 transition-colors max-w-[80px] truncate" %>
+        </div>
+      </div> 
+    <% end %>
+  </div>
+<% end %>

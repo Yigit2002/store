@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Store" %></title>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+
+    <title><%= content_for(:title) || "Hero Shop" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
 
     <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -21,17 +23,66 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
+  <nav class="bg-white w-full shadow-lg">
+    <%= link_to "HERO SHOP", root_path, class: "text-3xl font-bold text-blue-500 mr-auto" %>
+    <% if authenticated? %>
+      <div class="flex items-center space-x-2">
+        <span class="text-lg text-gray-600">Bakiyeniz <%=Current.user.balance%>₺ 💸</span>
+        <%= link_to "Ana Sayfa 🏡", root_path, class: " text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
+        <%= link_to "Favoriler ❤️", favorites_path, class: " text-lg text-green-600 hover:text-blue-800 font-medium transition-colors" %>
+        <% if authenticated? %>
+          <% unless Current.user.admin? %>
+            <%= link_to "Sepet 🛒", cart_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
+          <% end %>
+        <% if Current.user.admin? %>
+        <%= link_to "Kullanıcılar 👥", users_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
+        <% end %>
+      <%end%>
+      
+      <%= button_to "Çıkış Yap ⍈", session_path, class: "text-lg text-red-600 hover:text-red-800 font-medium transition-colors", method: :delete %>
+      <span class="text-gray-600">Hoşgeldiniz <%= Current.user.email_address %> <%=Current.user.role%></span>
+      </div>
+    <% end %>
+  </nav>
+  <body class="bg-gray-100 font-sans flex flex-col min-h-screen">   
+    <div class="flex flex-1">
+    <% if authenticated? %>
+      <aside class="w-40 bg-gray-50 fixed shadow-lg p-6">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">Kategoriler ☰</h2>
+        <ul class="space-y-3">
+          <% @categories.each do |category| %>
+            <li>
+              <%= link_to category.name, products_path(category_id: category.id), class: "block text-blue-600 hover:text-blue-800 hover:bg-blue-100 px-1 py-2 rounded-md transition-colors" %>
+            </li>
+          <% end %>
+        </ul>
+      </aside>
+    <% end %>
+    
+    <% if alert %>
+      <p class="bg-red-100 text-red-800 p-4 rounded-md mb-4"><%= alert %></p>
+    <% end %>
 
-  <body>
-    <div class="notice"><%="notice"%></div>
-    <nav>
-      <%= link_to "Home", root_path%>
-      <%= button_to "Log Out", session_path, method: :delete if authenticated?%>
-      <%= link_to "Sign Up", new_registration_path, class: "text-blue-600-underline"%>
-      <%= Current.user&.email_address%>
-    </nav>
-    <main>
-      <%= yield %>
+    <main class="flex-1 p-6">
+      <%= yield %> 
     </main>
+  </div>
+
+  <footer class="bg-gray-800 text-white text-center py-5 w-full fixed bottom-0 left-0">
+    <p>© 2025 HERO SHOP. Tüm Hakları Saklıdır.</p>
+    <div class="space-x-4">
+      <%= link_to "Hakkımızda", about_path, class: "text-gray-400 hover:text-white" %>
+      <%= link_to "İletişim", contact_path, class: "text-gray-400 hover:text-white" %>
+      <%= link_to "Gizlilik Politikası", privacy_policy_path, class: "text-gray-400 hover:text-white" %>
+      <a href="https://x.com/kahraman2_yigit" target="_blank" class="hover:text-gray-300 transition-colors">X</a>
+      <a href="https://www.instagram.com/yigitkahraman06/" target="_blank" class="hover:text-gray-300 transition-colors">Instagram</a>
+    </div>
+  </footer>
   </body>
 </html>
+
+
+
+
+
+

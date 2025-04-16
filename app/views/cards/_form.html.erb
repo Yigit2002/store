@@ -1,0 +1,43 @@
+<%= form_with model: card, id: "card_form", class: "space-y-6 max-w-lg mx-auto", data: { turbo: false } do |form| %>
+  <% if card.errors.any? %>
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+      <strong class="font-bold">Hata!</strong>
+      <ul class="mt-2 list-disc list-inside">
+        <% card.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, "Kart Adı", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.text_field :name, class:  "w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+  </div>
+
+  <div>
+    <%= form.label :number, "Kart Numarası", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.text_field :number, class:  "w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", maxlength: 16 %>
+  </div>
+
+  <div>
+    <%= form.label :security_code, "Güvenlik Kodu", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.text_field :security_code, class:  "p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", maxlength: 3 %>
+  </div>
+
+  <div>
+    <%= form.label :expiry_date, "Son Kullanma Tarihi", class: "block text-sm font-medium text-gray-700" %>
+    <%= form.date_field :expiry_date, class: "w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+  </div>
+
+  <% if Current.user&.admin? %>
+    <div>
+      <%= form.label :balance, "Bakiye", class: "block text-sm font-medium text-gray-700" %>
+      <%= form.number_field :balance, step: 0.01, class: "w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.submit card.new_record? ? "Kart Ekle" : "Güncelle", class: "bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition-colors" %>
+  </div>
+<% end %>
