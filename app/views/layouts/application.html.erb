@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="min-h-screen">
   <head>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
@@ -23,31 +23,46 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-  <nav class="bg-white w-full shadow-lg">
+  
+  <body class="bg-gray-100 font-sans flex flex-col min-h-screen">
+    <nav class="bg-white w-full shadow-lg py-4" style="min-width: 100%; max-width: 100%;">
     <%= link_to "HERO SHOP", root_path, class: "text-3xl font-bold text-blue-500 mr-auto" %>
     <% if authenticated? %>
-      <div class="flex items-center space-x-2">
-        <span class="text-lg text-gray-600">Bakiyeniz <%=Current.user.balance%>₺ 💸</span>
+      <div class="flex items-center space-x-6">
         <%= link_to "Ana Sayfa 🏡", root_path, class: " text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
         <%= link_to "Favoriler ❤️", favorites_path, class: " text-lg text-green-600 hover:text-blue-800 font-medium transition-colors" %>
+        <%= link_to "Kartlar 💳", cards_path, class: " text-lg text-green-600 hover:text-blue-800 font-medium transition-colors" %>
+        <%= link_to "Profilim 👤", profile_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
+
         <% if authenticated? %>
           <% unless Current.user.admin? %>
             <%= link_to "Sepet 🛒", cart_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
           <% end %>
         <% if Current.user.admin? %>
         <%= link_to "Kullanıcılar 👥", users_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
+        <%= link_to "Yeni Ürün Ekle 🆕", new_product_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
+        <%= link_to "Kategoriler 🗃️", categories_path, class: " text-lg text-green-600 hover:text-blue-800 font-medium transition-colors" %>
+        <%= link_to "Yeni Kart Ekle 🎟️", new_card_path, class: " text-lg text-green-600 hover:text-blue-800 font-medium transition-colors" %>
         <% end %>
       <%end%>
-      
-      <%= button_to "Çıkış Yap ⍈", session_path, class: "text-lg text-red-600 hover:text-red-800 font-medium transition-colors", method: :delete %>
-      <span class="text-gray-600">Hoşgeldiniz <%= Current.user.email_address %> <%=Current.user.role%></span>
+      <span class="text-lg text-gray-600">Bakiyeniz <%=Current.user.balance%>₺ 💸</span>
+      <%= button_to "Çıkış Yap 🔒", session_path, class: "text-lg text-red-600 hover:text-red-800 font-medium transition-colors", method: :delete %>
+      <span class="text-gray-600">Hoşgeldiniz <%= Current.user.first_name%> <%=Current.user.last_name%></span>
       </div>
     <% end %>
   </nav>
-  <body class="bg-gray-100 font-sans flex flex-col min-h-screen">   
-    <div class="flex flex-1">
-    <% if authenticated? %>
-      <aside class="w-40 bg-gray-50 fixed shadow-lg p-6">
+  <div id="messages" class="w-full z-50 mt-16">
+      <% if notice %>
+        <p class="bg-green-100 text-red-800 p-4 rounded-md mb-4 text-center"><%= notice %></p>
+      <% end %>
+      <% if alert %>
+        <p class="bg-red-100 text-red-800 p-4 rounded-md mb-4 text-center"><%= alert %></p>
+      <% end %>
+    </div>
+
+  <div class="flex flex-1 w-full">
+    <% if authenticated? && current_page?(root_path) || current_page?(products_path) %>
+      <aside class="bg-white w-80 fixed shadow-lg p-6" style="top: 125px;">
         <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">Kategoriler ☰</h2>
         <ul class="space-y-3">
           <% @categories.each do |category| %>
@@ -58,17 +73,14 @@
         </ul>
       </aside>
     <% end %>
-    
-    <% if alert %>
-      <p class="bg-red-100 text-red-800 p-4 rounded-md mb-4"><%= alert %></p>
-    <% end %>
 
     <main class="flex-1 p-6">
       <%= yield %> 
     </main>
+    
   </div>
 
-  <footer class="bg-gray-800 text-white text-center py-5 w-full fixed bottom-0 left-0">
+  <footer class="bg-gray-800 text-white text-center py-4 w-full">
     <p>© 2025 HERO SHOP. Tüm Hakları Saklıdır.</p>
     <div class="space-x-4">
       <%= link_to "Hakkımızda", about_path, class: "text-gray-400 hover:text-white" %>
@@ -78,6 +90,26 @@
       <a href="https://www.instagram.com/yigitkahraman06/" target="_blank" class="hover:text-gray-300 transition-colors">Instagram</a>
     </div>
   </footer>
+
+  
+  <script>
+  function decreaseQty(btn) {
+    var input = btn.nextElementSibling;
+    var value = parseInt(input.value);
+    if (value > 1) {
+      input.value = value - 1;
+    }
+  }
+
+  function increaseQty(btn) {
+    var input = btn.previousElementSibling;
+    var value = parseInt(input.value);
+    var max = parseInt(input.getAttribute('max'));
+    if (value < max) {
+      input.value = value + 1;
+    }
+  }
+</script>
   </body>
 </html>
 

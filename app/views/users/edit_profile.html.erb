@@ -1,0 +1,63 @@
+<div class="container">
+  <h1 class="text-2xl font-semibold mb-6">Profili Düzenle</h1>
+  
+  <%= form_with(model: Current.user, url: update_profile_path, method: :patch, local: true) do |form| %>
+    <% if Current.user.errors.any? %>
+      <div class="bg-red-100 text-red-800 p-4 rounded-md mb-4">
+        <h2><%= pluralize(Current.user.errors.count, "hata") %> nedeniyle profiliniz kaydedilemedi:</h2>
+        <ul class="list-disc list-inside">
+          <% Current.user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    
+    <div class="bg-white shadow-lg rounded-lg p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h2 class="text-xl font-medium mb-4">Kişisel Bilgiler</h2>
+          
+          <div class="mb-4">
+            <%= form.label :first_name, "Ad", class: "block mb-1" %>
+            <%= form.text_field :first_name, class: "w-full p-2 border rounded" %>
+          </div>
+          
+          <div class="mb-4">
+            <%= form.label :last_name, "Soyad", class: "block mb-1" %>
+            <%= form.text_field :last_name, class: "w-full p-2 border rounded" %>
+          </div>
+
+          <div class="mb-4 flex items-center">
+          <span class="inline-block bg-gray-100 p-2 rounded-l border border-r-0 text-gray-700">+90</span>
+          <%= form.text_field :telefon_numarasi, value: Current.user.telefon_numarasi&.sub(/^\+90/, ''), placeholder: "5551234567", pattern: "\\d{10}", maxlength: 10, class: "w-full p-2 border rounded-r focus:outline-none focus:ring-2 focus:ring-blue-500", required: true %>
+        </div>
+
+          <div class="mb-4">
+            <%= form.label :email_address, "E-posta (sadece admin düzenleyebilir)", class: " text-bold block mb-1" %>
+            <%= form.email_field :email_address, disabled: true, class: "w-full p-2 border rounded" %>
+          </div>
+        </div>
+        
+
+      <h2 class="text-xl font-medium mb-4 mt-6">Şifre Değiştirme</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="mb-4">
+          <%= form.label :password, "Yeni Şifre", class: "block mb-1" %>
+          <%= form.password_field :password, class: "w-full p-2 border rounded" %>
+        </div>
+        
+        <div class="mb-4">
+          <%= form.label :password_confirmation, "Yeni Şifre (Tekrar)", class: "block mb-1" %>
+          <%= form.password_field :password_confirmation, class: "w-full p-2 border rounded" %>
+        </div>
+      </div>
+      
+      <div class="mt-6">
+        <%= form.submit "Profili Güncelle", class: "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors" %>
+        <%= link_to "İptal", profile_path, class: "ml-2 text-gray-600 hover:text-gray-800" %>
+      </div>
+    </div>
+  <% end %>
+</div>
