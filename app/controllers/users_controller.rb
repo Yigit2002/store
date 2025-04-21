@@ -17,7 +17,38 @@ class UsersController < ApplicationController
     end
   end
 
+  def show_profile
+    @user = current_user
+  end
+  
+  # Profil düzenleme sayfası için
+  def edit_profile
+    @user = current_user
+  end
+  
+  # Profil güncelleme işlemi için
+  def update_profile
+    @user = Current.user
+    
+    if @user.update(profile_params)
+      redirect_to profile_path, notice: 'Profiliniz başarıyla güncellendi.'
+    else
+      render :edit_profile
+    end
+  end
+
   private
+
+  def user_params
+    params.require(:user).permit(:email_address, :password, :password_confirmation, :role, 
+                                :first_name,:telefon_numarasi, :last_name, :addresses, 
+                                :city, :country, :balance)
+  end
+  
+  def profile_params
+    params.require(:user).permit(:first_name, :last_name, :addresses, 
+                                :city,:country, :password, :password_confirmation,:telefon_numarasi)
+  end
 
   def ensure_admin
     unless Current.user&.admin?
