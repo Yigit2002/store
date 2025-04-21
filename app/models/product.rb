@@ -1,9 +1,12 @@
 class Product < ApplicationRecord
   include Product::Notifications
   has_many :subscribers, dependent: :destroy
-  
+
   has_many :favorites, dependent: :destroy
   has_many :favorited_by_users, through: :favorites, source: :user
+
+  has_many :comments, dependent: :destroy
+  has_many :users, through: :comments
 
   has_many :cart_items
   has_many :carts, through: :cart_items
