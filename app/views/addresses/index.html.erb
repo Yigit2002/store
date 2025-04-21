@@ -1,0 +1,23 @@
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-3xl font-bold text-gray-800">Adreslerim</h1>
+  <%= link_to "Yeni Adres Ekle", new_address_path, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors" %>
+</div>
+<p class="mb-4">
+  <%= link_to "← Geri", profile_path, class: "text-blue-500 hover:underline" %>
+</p>
+<% if @addresses.empty? %>
+  <p class="text-gray-600">Henüz kayıtlı adresiniz bulunmamaktadır.</p>
+<% else %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @addresses.each do |address| %>
+      <div class="bg-white shadow-md rounded-lg p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-2"><%= address.title %></h3>
+        <p class="text-gray-600 mb-4"><%= address.body %></p>
+        <div class="flex space-x-2">
+          <%= link_to "Düzenle", edit_address_path(address), class: "bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition-colors" %>
+          <%= button_to "Sil", address_path(address), method: :delete, data: { confirm: "Bu adresi silmek istediğinizden emin misiniz?" }, class: "bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition-colors" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
