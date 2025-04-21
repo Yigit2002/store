@@ -1,10 +1,24 @@
 class CartsController < ApplicationController
   before_action :set_cart
 
+
   include ActionView::Helpers::NumberHelper
 
   def show
     @cart_items = @cart.cart_items
+  end
+
+  def update_quantity
+    @cart_item = CartItem.find(params[:id])
+    new_quantity = params[:quantity].to_i
+
+    if new_quantity > 0
+      @cart_item.update(quantity: new_quantity)
+      redirect_to cart_path
+    else
+      @cart_item.destroy
+      redirect_to cart_path, notice: "Ürün sepetten kaldırıldı."
+    end
   end
 
   def add_to_cart
@@ -17,10 +31,23 @@ class CartsController < ApplicationController
       cart_item = @cart.cart_items.build(product: product, quantity: params[:quantity].to_i)
     end
 
-    if cart_item.quantity <= product.inventory_count && cart_item.save
-      redirect_to cart_path, notice: "Ürün sepete eklendi."
-    else
-      redirect_to products_path, alert: "Ürün sepete eklenemedi. Stok yetersiz veya geçersiz adet."
+    respond_to do |format|
+      if cart_item.quantity <= product.inventory_count && cart_item.save
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.append("messages", "<div class='bg-green-100 text-green-800 p-4 rounded-md mb-4 fixed top-0 w-full z-50' id='notice_#{Time.now.to_i}'>Ürün sepete eklendi.</div><script>setTimeout(() => {document.getElementById('notice_#{Time.now.to_i}').remove();}, 3000);</script>"),
+            turbo_stream.update("cart_items_count", "<span class='text-lg text-gray-600'>#{Current.user.cart.cart_items.sum(:quantity)}</span>")
+          ]
+        end
+        format.html { redirect_to products_path, notice: "Ürün sepete eklendi." } # Fallback için
+      else
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.append("messages", "<div class='bg-red-100 text-red-800 p-4 rounded-md mb-4 fixed top-0 w-full z-50' id='alert_#{Time.now.to_i}'>Ürün sepete eklenemedi. Stok yetersiz veya geçersiz adet.</div><script>setTimeout(() => {document.getElementById('alert_#{Time.now.to_i}').remove();}, 3000);</script>")
+          ]
+        end
+        format.html { redirect_to products_path, alert: "Ürün sepete eklenemedi. Stok yetersiz veya geçersiz adet." } # Fallback için
+      end
     end
   end
 

@@ -2,6 +2,7 @@
 
 <% if @cart_items.empty? %>
   <p class="text-gray-600">Sepetiniz boş.</p>
+  <%= link_to "Alışverişe Başla", products_path, class: "text-blue-500 hover:underline mt-4 inline-block" %>
 <% else %>
   <div class="bg-white shadow-md rounded-lg p-6 mb-6">
     <% @cart_items.each do |item| %>
@@ -11,6 +12,11 @@
           <p class="text-gray-600">Adet: <%= item.quantity %></p>
           <p class="text-gray-600">Birim Fiyat: <%= number_to_currency(item.product.price, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") %></p>
           <p class="text-gray-600">Toplam: <%= number_to_currency(item.product.price * item.quantity, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") %></p>
+          <div class="flex items-center">
+            <%= button_to "-", update_quantity_cart_path(item, quantity: item.quantity - 1), method: :patch, class: "quantity-btn" %>
+            <p class="text-gray-600"> ‏‎ <%= item.quantity %> </p> 
+            <%= button_to "+", update_quantity_cart_path(item, quantity: item.quantity + 1), method: :patch, class: "quantity-btn" %>
+          </div>
         </div>
         <div>
           <%= button_to "Kaldır", remove_from_cart_path(item), method: :delete, class: "bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors" %>
@@ -20,19 +26,17 @@
     <p class="text-xl font-semibold text-gray-800">
       Kargo: 32.99₺ ‏‎ KDV: 12.99₺<br><br>
       Toplam: <%= number_to_currency(@cart_items.sum { |item| item.product.price * item.quantity + 32.99 + 12.99 }, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") %>
-    </p>
+      <% if Current.user %>
+        <p class="text-bold-gray-600 mb-4">Mevcut Bakiyeniz: <%= number_to_currency(Current.user.balance, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") %></p>
+      <% else %>
+        <p class="text-gray-600 mb-4">Bakiyenizi görmek için lütfen giriş yapın.</p>
+      <% end %>
+        </p>
   </div>
   
   <div class="flex space-x-4 mb-4">
-    <%= button_to "Tümünü Sil", clear_cart_path, method: :delete, class: "bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600 transition-colors" %>  </div>
-
-  <% if Current.user %>
-    <p class="text-gray-600 mb-4">Mevcut Bakiyeniz: <%= number_to_currency(Current.user.balance, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") %></p>
-  <% else %>
-    <p class="text-gray-600 mb-4">Bakiyenizi görmek için lütfen giriş yapın.</p>
-  <% end %>
-
-  <%= button_to "Satın Al", checkout_cart_path, method: :post, class: "bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition-colors" %>
+    <%= button_to "Tümünü Sil", clear_cart_path, method: :delete, class: "bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600 transition-colors" %>
+    <%= button_to "Satın Al", checkout_cart_path, method: :post, class: "bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition-colors" %> 
+    <%= link_to "Alışverişe Devam Et", products_path, class: "text-blue-500 hover:underline mt-4 inline-block" %>
+  </div>  
 <% end %>
-
-<%= link_to "Alışverişe Devam Et", products_path, class: "text-blue-500 hover:underline mt-4 inline-block" %>
