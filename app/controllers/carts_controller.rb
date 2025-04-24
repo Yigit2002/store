@@ -1,11 +1,11 @@
 class CartsController < ApplicationController
   before_action :set_cart
 
-
   include ActionView::Helpers::NumberHelper
 
   def show
     @cart_items = @cart.cart_items
+    @addresses = Current.user.addresses
   end
 
   def update_quantity
@@ -64,6 +64,7 @@ class CartsController < ApplicationController
 
   def checkout
     total_price = @cart.cart_items.sum { |item| item.product.price * item.quantity }
+    @address = Current.user.addresses.find_by(id: params[:address_id])
 
     if Current.user.balance >= total_price
       # Stok ve bakiye kontrolü
@@ -83,7 +84,6 @@ class CartsController < ApplicationController
 
       Current.user.update!(balance: Current.user.balance - total_price)
       @cart.cart_items.destroy_all
-
       redirect_to products_path, notice: "Satın alma işlemi başarıyla tamamlandı."
     else
       redirect_to cart_path, alert: "Bakiyeniz yetersiz!"
