@@ -1,0 +1,34 @@
+<div class="container">
+  <h1 class="text-2xl font-semibold mb-6">Profilim</h1>
+  
+  <% if notice.present? %>
+    <div class="bg-green-100 text-green-800 p-4 rounded-md mb-4">
+      <%= notice %>
+    </div>
+  <% end %>
+  
+  <div class="bg-white shadow-lg rounded-lg p-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h2 class="text-2xl font-semibold mb-6">Kişisel Bilgiler</h2>
+        <p class="mb-2"><strong>Ad:</strong> <%= Current.user.first_name %></p>
+        <p class="mb-2"><strong>Soyad:</strong> <%= Current.user.last_name %></p>
+        <p class="mb-2"><strong>E-posta:</strong> <%= Current.user.email_address %></p>
+        <p class="mb-2"><strong>Hesap Tipi:</strong> <%= Current.user.role == "admin" ? "Yönetici" : "Müşteri" %></p>
+        <p class="mb-2"><strong>Bakiye:</strong> <%= number_to_currency(Current.user.balance, unit: "₺") %></p>
+        <p class="mb-2"><strong>Telefon Nuraması:</strong> <%= Current.user.telefon_numarasi%></p>
+      </div>
+      
+        <div class="flex space-x-4">
+          <%= link_to "Adreslerim 📍", addresses_path, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors" %>
+          <%= link_to "Kartlar 💳", cards_path, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors" %>
+        </div>
+    
+    <div class="mt-6 flex gap-3">
+      <%= link_to "Profili Düzenle", edit_profile_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
+      <% if Current.user.role == "admin" %>
+        ‏‎ | <%= link_to "‏‎ Kullanıcı Yönetimi", users_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
+      <% end %>
+    </div>
+  </div>
+</div>

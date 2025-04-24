@@ -1,6 +1,12 @@
 class ProductsController < ApplicationController
+
   def index
-    @products = Product.all
+    if params[:category_id]
+      @category = Category.find(params[:category_id])
+      @products = @category.products
+    else
+      @products = Product.all
+    end
   end
 
   def show
@@ -9,6 +15,7 @@ class ProductsController < ApplicationController
 
   def new
     @product = Product.new
+    @categories = Category.all
   end
 
   def create
@@ -42,6 +49,6 @@ class ProductsController < ApplicationController
   private
 
   def product_params
-    params.expect(product: [ :name, :description, :featured_image, :inventory_count ])
+    params.require(:product).permit(:name, :description, :featured_image, :inventory_count, :category_id, :price)
   end
 end

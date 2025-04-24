@@ -1,4 +1,54 @@
-<h1>New Product</h1>
+        <!-- Form Section -->
+        <section class="bg-white p-2 rounded-lg shadow-lg mx-auto">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Yeni Ürün Ekle</h2>
 
-<%= render "form", product: @product%>
-<%= link_to "Cancel", products_path%>
+            <%= form_with model: @product, local: true, html: { multipart: true } do |form| %>
+                <!-- Name Field -->
+                <div class="mb-4">
+                    <%= form.label :name, "İsim", class: "block text-gray-700 font-medium mb-2" %>
+                    <%= form.text_field :name, class: "w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+                </div>
+
+                <!-- Description Field -->
+                <div class="mb-4">
+                    <%= form.label :description, "Açıklama", class: "block text-gray-700 font-medium mb-2" %>
+                    <%= form.rich_text_area :description, class: "w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500", style: "display: block" %>
+                </div>
+                
+                <div class="mb-4">
+                    <%= form.label :category_id, "Kategori", class: "block text-gray-700 font-medium mb-2" %>
+                    <%= form.collection_select :category_id, @categories, :id, :name, { prompt: "Kategori Seçin" }, class: "w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+                </div>
+                <br><br>
+
+                <div class="mb-4">
+                    <%= form.label :price, "Fiyat (TL)", class: "block text-gray-700 font-semibold mb-2" %>
+                    <div class="relative">
+                        <%= form.number_field :price, step: 0.01, class: "w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-gray-100 text-gray-800 placeholder-gray-400" %>
+                    </div>
+                </div>
+
+                <!-- Featured Image Field -->
+                <div class="mb-4">
+                    <%= form.label :featured_image, "Fotoğraf", class: "block text-gray-700 font-medium mb-2" %>
+                    <div class="relative">
+                        <%= form.file_field :featured_image, class: "opacity-0 absolute w-full h-full", accept: "image/*", id: "featured_image" %>
+                        <label for="featured_image" class="w-full p-2 border border-gray-300 rounded-lg bg-white text-gray-500 cursor-pointer hover:bg-gray-50">
+                            Dosya Seç...
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Inventory Count Field -->
+                <div class="mb-6">
+                    <%= form.label :inventory_count, "Stok Miktarı", class: "block text-gray-700 font-medium mb-2" %>
+                    <%= form.number_field :inventory_count, class: "w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500", style: "display: block" %>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex space-x-4">
+                    <%= form.submit "Ürünü Ekle", class: "bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer" %>
+                    <a href="<%= products_path %>" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition text-center">İptal Et</a>
+                </div>
+            <% end %>
+        </section>

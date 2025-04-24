@@ -1,11 +1,23 @@
 class Product < ApplicationRecord
   include Product::Notifications
   has_many :subscribers, dependent: :destroy
-  has_one_attached :featured_image
-  has_rich_text :description
 
+  has_many :favorites, dependent: :destroy
+  has_many :favorited_by_users, through: :favorites, source: :user
+
+  has_many :comments, dependent: :destroy
+  has_many :users, through: :comments
+
+  has_many :cart_items
+  has_many :carts, through: :cart_items
+
+  has_one_attached :featured_image  
+  has_rich_text :description
+  belongs_to :category
+  
   validates :name, presence: true
   validates :inventory_count, numericality: { greater_than_or_equal_to: 0 }
+  validates :category_id, presence: true
 
   after_update_commit :notify_subscribers, if: :back_in_stock?
 

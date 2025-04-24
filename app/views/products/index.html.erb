@@ -1,10 +1,31 @@
-<h1><%= t '.title' %></h1>
-<%= link_to "New Product", new_product_path if authenticated? %>
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-3xl font-bold text-gray-800">Ürünlerimiz</h1>
+  </div>
 
-<div id="products">
-    <% @products.each do |product| %>
-        <div>
-            <%= link_to product.name, product%>
+<% if @products.empty? %>
+  <p class="text-gray-600">Henüz ürün bulunmamaktadır.</p>
+<% else %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  <% @products.each do |product| %>
+    <div class="bg-white hover:text-blue-800 hover:bg-blue-100 shadow-md rounded-lg p-6 flex flex-col items-center hover:bg-gray-100 cursor-pointer transition-colors">
+      <%= link_to product_path(product), class: "w-full h-full flex flex-col items-center" do %>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center"><%= product.name %></h3>
+        <%= image_tag product.featured_image, class: "w-48 h-32 object-cover rounded-md mb-4" %>
+        <p class="text-gray-600 mb-4">Stok: <%= product.inventory_count %></p>
+        <p class="text-gray-600 mb-4">Fiyat: <%= product.price.present? ? number_to_currency(product.price, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") : "Belirtilmemiş" %></p>
+      <% end %>
+      
+      <%= form_with(url: "/cart/add_to_cart", method: :post, data: { turbo: true }) do |form| %>
+        <%= form.hidden_field :product_id, value: product.id %>
+        <div class="quantity-wrapper" style="display: flex; align-items: center; justify-content: center; margin: 10px 0;">
+          <button type="button" class="quantity-btn" onclick="decreaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 4px 0 0 4px; font-weight: bold; cursor: pointer;">-</button>
+          <%= form.number_field :quantity, value: 1, min: 1, max: product.inventory_count, class: "quantity-input", style: "width: 40px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 0; margin: 0; padding: 0; -webkit-appearance: none; -moz-appearance: textfield;", readonly: true %>
+          <button type="button" class="quantity-btn" onclick="increaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 0 4px 4px 0; font-weight: bold; cursor: pointer;">+</button>
         </div>
-    <% end %>
+        <p> ‏‎ </p>
+        <%= form.submit "Sepete Ekle 🏷️", class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
+      <% end %>
+    </div>
+  <% end %>
 </div>
+<% end %>

@@ -1,23 +1,45 @@
 <%= form_with model: @product, local: true, html: {multipart: true} do |form| %>
-<div>
-    <%=form.label :name%>
-    <%=form.text_field :name%>
-</div>
+    <!-- Main Content -->
+    <main class="container mx-auto mt-8 px-4">
+                <!-- Name Field -->
+            <div class="mb-4">
+                <%= form.label :name,"İsim", class: "block text-gray-700 font-medium mb-2" %>
+                <%= form.text_field :name, class: "w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+            </div>
 
-<div>
-    <%= form.label :description ,style: "display: block"%>
-    <%= form.rich_text_area :description%>
-</div>
+                <!-- Description Field -->
+            <div class="mb-4">
+                <%= form.label :description,"Açıklama", class: "block text-gray-700 font-medium mb-2" %>
+                <%= form.rich_text_area :description, class: "w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500", style: "display: block" %>
+            </div>
 
-<div>
-    <%=form.label :featured_image, style: "display: block"%>
-    <%=form.file_field :featured_image, accept: "image/*"%>
-</div>
+                <!-- Featured Image Field -->
+            <div class="mb-4">
+                <%= form.label :featured_image,"Fotoğraf", class: "block text-gray-700 font-medium mb-2" %>
+                <%= form.file_field :featured_image, class: "w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500", style: "display: block", accept: "image/*" %>
+            </div>
 
-<div>
-    <%= form.label :inventory_count, style: "display: block"%>
-    <%= form.number_field :inventory_count%>
-<div>
-    <%=form.submit%>
-</div>
-<%end%>
+                <!-- Inventory Count Field -->
+            <div class="mb-6">
+                <%= form.label :inventory_count,"Stok", class: "block text-gray-700 font-medium mb-2" %>
+                <%= form.number_field :inventory_count, class: "w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500", style: "display: block" %>
+            </div>
+
+            <div class="mb-4">
+                <%= form.label :price, "Fiyat (TL)", class: "block text-gray-700 font-semibold mb-2" %>
+                <div class="relative">
+                     <%= form.number_field :price, step: 0.01, class: "w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-gray-100 text-gray-800 placeholder-gray-400" %>    
+                </div>
+            </div>
+
+            <div class="mb-4">
+                 <%= form.label :category_id, "Kategori", class: "block text-gray-700 font-medium mb-2" %>
+                 <%= form.collection_select :category_id, @categories, :id, :name, { prompt: "Kategori Seçin" }, class: "w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+            </div>
+
+            <div class="flex space-x-4">
+                <%= form.submit "Ürünü Güncelle", class: "bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer" %>
+                <%= link_to "İptal Et", @product, class:"bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition text-center"%>
+            </div>
+        <% end %>
+    </main>

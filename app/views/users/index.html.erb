@@ -1,0 +1,33 @@
+<h1 class="text-3xl font-bold text-gray-800 mb-6">Kullanıcılar</h1>
+
+<div class="bg-white shadow-md rounded-lg p-6">
+  <table class="w-full table-auto">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="px-4 py-2 text-left">E-posta</th>
+        <th class="px-4 py-2 text-left">Rol</th>
+        <th class="px-4 py-2 text-left">Bakiye</th>
+        <% if Current.user.admin? %>
+          <th class="px-4 py-2 text-left">Bakiye Güncelle</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr class="border-b">
+          <td class="px-4 py-2"><%= user.email_address %></td>
+          <td class="px-4 py-2"><%= user.role %></td>
+          <td class="px-4 py-2"><%= number_to_currency(user.balance, unit: "TL", format: "%n%u", separator: ",", delimiter: ".") %></td>
+          <% if Current.user.admin? %>
+            <td class="px-4 py-2">
+              <%= form_with(url: update_balance_user_path(user), method: :patch, class: "inline-flex items-center space-x-2") do |form| %>
+                <%= form.number_field :balance, value: user.balance, step: 0.01, min: 0, class: "w-24 p-1 border rounded" %>
+                <%= form.submit "Güncelle", class: "bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition-colors" %>
+              <% end %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,19 +1,120 @@
-<p><%= link_to "Back", products_path %></p>
+<p class="mb-4">
+  <%= link_to "← Geri", products_path, class: "text-blue-500 hover:underline" %>
+</p>
 
-<section class="product">
-  <%= image_tag @product.featured_image if @product.featured_image.attached? %>
+<section class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
+  <% if @product.featured_image.attached? %>
+    <%= image_tag @product.featured_image, class: "w-64 h-auto mx-auto mb-4 rounded-md shadow" %>
+  <% end %>
 
-  <section class="product-info">
-    <% cache @product do %>
-      <h1><%= @product.name %></h1>
-      <%= @product.description %>
-    <% end %>
-
-    <%= render "inventory", product: @product %>
-
-    <% if authenticated? %>
-      <%= link_to "Edit", edit_product_path(@product) %>
-      <%= button_to "Delete", @product, method: :delete, data: { turbo_confirm: "Emin misin?" } %>
-    <% end %>
+  <section class="text-center mb-6">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-2"><%= @product.name %></h1>
+    <p class="text-gray-600"><%= @product.description %></p>
   </section>
+  <p class="text-gray-600 font-semibold mb-4">Fiyat: <%= @product.price.present? ? number_to_currency(@product.price, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") : "Belirtilmemiş" %></p>
+
+  <div class="text-center mb-4">
+    <%= render "inventory", product: @product %>
+  </div>
+
+
+    <%= form_with(url: "/cart/add_to_cart", method: :post, class: "inline") do |form| %>
+            <%= form.hidden_field :product_id, value: @product.id %>
+            <p> ‏‎ </p>
+            <div class="quantity-wrapper" style="display: flex; align-items: center; justify-content: center; margin: 10px 0;">
+              <button type="button" class="quantity-btn" onclick="decreaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 4px 0 0 4px; font-weight: bold; cursor: pointer;">-</button>
+              <%= form.number_field :quantity, value: 1, min: 1, max:  @product.inventory_count, 
+                class: "quantity-input",
+                style: "width: 40px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 0; margin: 0; padding: 0; -webkit-appearance: none; -moz-appearance: textfield;",
+                readonly: true %>
+              <button type="button" class="quantity-btn" onclick="increaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 0 4px 4px 0; font-weight: bold; cursor: pointer;">+</button>
+            </div>
+            <p> ‏‎ </p>
+            <%= form.submit "Sepete Ekle 🏷️", class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
+        <% end %>
+
+  <div>
+    <% if Current.user.favorite_products.include?(@product) %>
+      <p> ‏‎ </p>
+      <%= button_to "Favorilerden Çıkar 💔", favorite_path(Current.user.favorites.find_by(product: @product)), method: :delete, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors" %>
+    <% else %>
+      <p> ‏‎ </p>
+      <%= button_to "Favorilere Ekle ❤️", favorites_path(product_id: @product.id), method: :post, class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
+    <% end %>
+
+
+
+
+    <!-- Yorum Yapma Formu -->
+<div class="bg-white shadow-lg rounded-lg p-6">
+  <h2 class="font-semibold mb-4 shadow-lg">Yorum Yap</h2>
+  <br><br>
+  
+  <% if authenticated? %>
+    <%= form_with(model: [@product, Comment.new], local: true) do |form| %>
+      <div class="mb-4">
+        <label class="block text-gre-700">Değerlendirme</label>
+        <%= form.select :rating, options_for_select([["Puan Verin", nil], ["1", 1], ["2", 2], ["3", 3], ["4", 4], ["5", 5]]), {}, class: "form-select w-full rounded shadow-lg" %>
+      </div>
+      
+      <div class="mb-4">
+        <br><br>
+        <label class="block text-gray-700 shadow-lg">Yorumunuz</label>
+        <%= form.text_area :content, class: "form-textarea w-full rounded", rows: 4 %>
+      </div>
+      
+      <%= form.submit "Yorum Gönder", class: "bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded" %>
+    <% end %>
+  <% else %>
+    <p class="text-gray-500">Yorum yapmak için <a href="/users/sign_in" class="text-blue-500">giriş</a> yapmalısınız.</p>
+  <% end %>
+</div>
+
+<!-- Yorumların Listelenmesi -->
+<div class="mt-8">
+  <h2 class="font-semibold mb-4">Yorumlar</h2>
+  
+  <% if @product.comments.any? %>
+    <% @product.comments.each do |comment| %>
+      <div class="border-b py-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="font-semibold">
+            <% if comment.user.present? %>
+              <%= comment.user.first_name %> <%= comment.user.last_name %>
+            <% else %>
+              Anonim
+            <% end %>
+          </span>
+          
+          <% if authenticated? && (Current.user.id == comment.user_id || Current.user.admin?) %>
+            <%= link_to "Sil", product_comment_path(@product, comment), data: { turbo_method: :delete, turbo_confirm: "Yorumu silmek istediğinize emin misiniz?" }, class: "text-red-500" %>
+          <% end %>
+        </div>
+        
+        <!-- Yıldız Derecelendirmesi -->
+        <div class="flex items-center mb-2">
+          <% rating = comment.rating || 0 %>
+          <% rating.times do %>
+            <span class="text-yellow-400">★</span>
+          <% end %>
+          <% (5 - rating).times do %>
+            <span class="text-gray-300">☆</span>
+          <% end %>
+        </div>
+        
+        <p class="text-gray-700"><%= comment.content %></p>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="text-gray-500">Henüz yorum yok. İlk yorumu siz yapın!</p>
+  <% end %>
+</div>
+
+  <% if authenticated? && Current.user.admin? %>
+    <div class="flex justify-center space-x-4">
+      <%= link_to "Düzenle", edit_product_path(@product), class: "bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded" %>
+      <%= button_to "Sil", @product, method: :delete, data: { turbo_confirm: "Emin misin?" }, class: "bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded" %>
+    </div>
+  <% end %>
 </section>
+

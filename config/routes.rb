@@ -1,16 +1,76 @@
 Rails.application.routes.draw do
+  get "users/index"
+  get "users/update_balance"
+  get "carts/show"
+  get "carts/add_to_cart"
+  get "carts/remove_from_cart"
+  get "carts/checkout"
+  get "about", to: "pages#about"
+  get "contact", to: "pages#contact"
+  get "privacy_policy", to: "pages#privacy_policy"
+  get 'profile', to: 'users#show_profile', as: 'profile'
+  get 'profile/edit', to: 'users#edit_profile', as: 'edit_profile'
+  patch 'profile/update', to: 'users#update_profile', as: 'update_profile'
+
   # get 'home/index'
   # root to: 'home#index'
   resource :session
+  resources :favorites, only: [:index, :create, :destroy]
+
+  resource :cart, only: [:show] do
+    post :add_to_cart, as: :add_to_cart # add_to_cart_path
+    post :checkout, to: "carts#checkout"
+  end
+
+  resources :carts, only: [] do
+    member do
+      delete :remove_from_cart
+      patch :update_quantity
+    end
+  end
+
+
+  delete "cart/remove_from_cart/:id", to: "carts#remove_from_cart", as: :remove_from_cart
+
+  resources :users, only: [:index] do
+    member do
+      patch :update_balance
+    end
+  end
+
+  resources :cards, only: [:index, :new, :create, :destroy] do 
+    member do
+      get :edit_balance
+      patch :update_balance
+    end
+  end
+
+  get "admin/cards", to: "cards#admin_index", as: :admin_cards
+
+
+
+  resources :categories, only: [:index, :new, :create]
+  
+  delete :clear_cart, to: "carts#clear_cart"
+
   resource :registration, only: %i[new create]
   resource :unsubscribe, only: [ :show ]
   resources :passwords, param: :token
+  resources :addresses
   resources :products do
+    resources :comments, only: [:create, :destroy]
     resources :subscribers, only: [ :create ]
-  end
+  end 
   root "products#index"
+
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
+  
+
+  delete "session", to: "sessions#destroy"
   # get "/products", to: "products#index"
-  # get "/products/new" to: "products#new"
+  # get "/products/new" to: "products#new"pm
 
   # post "/products", to: "products#create"
 
