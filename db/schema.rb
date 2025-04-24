@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_21_082904) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_21_125300) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -55,6 +55,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_21_082904) do
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "city"
+    t.string "country"
     t.index ["user_id"], name: "index_addresses_on_user_id"
   end
 
@@ -149,9 +151,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_21_082904) do
     t.string "first_name"
     t.string "last_name"
     t.string "username"
-    t.text "address"
-    t.string "city"
-    t.string "country"
     t.string "telefon_numarasi"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
