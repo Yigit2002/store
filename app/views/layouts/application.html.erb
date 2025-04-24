@@ -31,7 +31,6 @@
       <div class="flex items-center space-x-6">
         <%= link_to "Ana Sayfa 🏡", root_path, class: " text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
         <%= link_to "Favoriler ❤️", favorites_path, class: " text-lg text-green-600 hover:text-blue-800 font-medium transition-colors" %>
-        <%= link_to "Kartlar 💳", cards_path, class: " text-lg text-green-600 hover:text-blue-800 font-medium transition-colors" %>
         <%= link_to "Profilim 👤", profile_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
 
         <% if authenticated? %>
@@ -51,18 +50,18 @@
       </div>
     <% end %>
   </nav>
-  <div id="messages" class="w-full z-50 mt-16">
-      <% if notice %>
-        <p class="bg-green-100 text-red-800 p-4 rounded-md mb-4 text-center"><%= notice %></p>
-      <% end %>
-      <% if alert %>
-        <p class="bg-red-100 text-red-800 p-4 rounded-md mb-4 text-center"><%= alert %></p>
-      <% end %>
-    </div>
+  <div id="messages" class="w-1/2 mx-auto z-50 mt-16">
+    <% if notice %>
+      <p class="bg-green-100 text-green-800 p-2 rounded-md mb-4 text-center"><%= notice %></p>
+    <% end %>
+    <% if alert %>
+      <p class="bg-red-100 text-red-800 p-4 rounded-md mb-4 text-center"><%= alert %></p>
+    <% end %>
+  </div>  
 
   <div class="flex flex-1 w-full">
     <% if authenticated? && current_page?(root_path) || current_page?(products_path) %>
-      <aside class="bg-white w-80 fixed shadow-lg p-6" style="top: 125px;">
+      <aside class="bg-white w-80 fixed shadow-lg p-6 overflow-y-auto" style="top: 68px; bottom: 0;">
         <h2 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">Kategoriler ☰</h2>
         <ul class="space-y-3">
           <% @categories.each do |category| %>

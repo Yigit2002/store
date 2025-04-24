@@ -10,8 +10,7 @@
   <div class="bg-white shadow-lg rounded-lg p-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        
-        <h2 class="text-xl font-medium mb-4">Kişisel Bilgiler</h2>
+        <h2 class="text-2xl font-semibold mb-6">Kişisel Bilgiler</h2>
         <p class="mb-2"><strong>Ad:</strong> <%= Current.user.first_name %></p>
         <p class="mb-2"><strong>Soyad:</strong> <%= Current.user.last_name %></p>
         <p class="mb-2"><strong>E-posta:</strong> <%= Current.user.email_address %></p>
@@ -20,9 +19,9 @@
         <p class="mb-2"><strong>Telefon Nuraması:</strong> <%= Current.user.telefon_numarasi%></p>
       </div>
       
-      
         <div class="flex space-x-4">
           <%= link_to "Adreslerim 📍", addresses_path, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors" %>
+          <%= link_to "Kartlar 💳", cards_path, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors" %>
         </div>
     
     <div class="mt-6 flex gap-3">
