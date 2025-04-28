@@ -49,7 +49,7 @@
               <select name="address_id" class="w-full border rounded-md p-2">
                 <% @addresses.each do |address| %>
                   <option value="<%= address.id %>">
-                    <%= address.title %>
+                    <%= "#{address.title} | #{truncate(address.body, length: 50, separator: ' ')}" %>
                   </option>
                 <% end %>
               </select>

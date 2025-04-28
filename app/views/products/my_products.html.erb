@@ -1,0 +1,19 @@
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-3xl font-bold text-gray-800">Ürünlerim</h1>
+</div>
+
+<% if @products.any? %>
+  <% @products.each do |product| %>
+    <div class="bg-white hover:text-blue-800 hover:bg-blue-100 shadow-md rounded-lg p-6 flex flex-col items-center hover:bg-gray-100 cursor-pointer transition-colors">
+      <%= link_to product_path(product), class: "w-full h-full flex flex-col items-center" do %>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center"><%= product.name %></h3>
+        <%= image_tag product.featured_image, class: "w-48 h-32 object-cover rounded-md mb-4" %>
+        <p class="text-gray-600 mb-4">Stok: <%= product.inventory_count %></p>
+        <p class="text-gray-600 mb-4">Fiyat: <%= product.price.present? ? number_to_currency(product.price, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") : "Belirtilmemiş" %></p>
+      <% end %>
+  <% end %>
+<% else %>
+  <p>Henüz satışa koyduğunuz bir ürün bulunmamaktadır.</p>
+<% end %>
+
+<%= link_to 'Yeni Ürün Ekle', new_product_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>

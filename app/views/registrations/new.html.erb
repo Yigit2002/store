@@ -1,11 +1,3 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <% if alert = flash[:alert] %>
-    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
-  <% end %>
-
-  <% if notice = flash[:notice] %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
-  <% end %>
 
   <h1 class="font-bold text-4xl">Kayıt Ol</h1>
   <br><br>
@@ -21,24 +13,12 @@
       <p> ‏‎ </p>
       <%= form.label :last_name, "Soyad" %>
       <%= form.text_field :last_name, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
+    </div>  
 
-    <div class="field">
+    <div>
       <p> ‏‎ </p>
-      <%= form.label :address, "Adres" %>
-      <%= form.text_area :address, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
-
-    <div class="field">
-      <p> ‏‎ </p>
-      <%= form.label :city, "Şehir" %>
-      <%= form.text_field :city, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
-
-    <div class="field">
-      <p> ‏‎ </p>
-      <%= form.label :country, "Ülke" %>
-      <%= form.text_field :country, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+      <%= form.label :role, "Rol" %>
+      <%= form.select :role, options_for_select([["Müşteri", "customer"], ["Satıcı", "seller"]]), { include_blank: "Rol Seçin" }, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full", id: "user_role" %>
     </div>
 
     <div class="my-5">
@@ -61,6 +41,27 @@
       <div class="mt-4 text-sm text-gray-500 sm:mt-0">
         <%= link_to "Şifreni mi unuttun?", new_password_path, class: "text-gray-700 underline" %>
       </div>
-    </div>
   <% end %>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const roleSelect = document.querySelector('select[name="user[role]"]');
+    const shopNameField = document.getElementById('shop_name_field');
+    
+    // Sayfa yüklendiğinde kontrol et
+    toggleShopNameField();
+    
+    // Rol değiştiğinde kontrol et
+    roleSelect.addEventListener('change', toggleShopNameField);
+    
+    function toggleShopNameField() {
+      if (roleSelect.value === 'seller') {
+        shopNameField.style.display = 'block';
+      } else {
+        shopNameField.style.display = 'none';
+      }
+    }
+  });
+</script>
+
 </div>

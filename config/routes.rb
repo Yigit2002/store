@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   resources :favorites, only: [:index, :create, :destroy]
 
   resource :cart, only: [:show] do
-    post :add_to_cart, as: :add_to_cart # add_to_cart_path
+    post :add_to_cart, as: :add_to_cart
     post :checkout, to: "carts#checkout"
   end
 
@@ -47,7 +47,11 @@ Rails.application.routes.draw do
 
   get "admin/cards", to: "cards#admin_index", as: :admin_cards
 
-
+  resources :products, only: [:index, :new, :create, :show] do
+    collection do
+      get 'my_products'
+    end
+  end
 
   resources :categories, only: [:index, :new, :create]
   
@@ -60,6 +64,7 @@ Rails.application.routes.draw do
   resources :products do
     resources :comments, only: [:create, :destroy]
     resources :subscribers, only: [ :create ]
+    resources :products, only: [:index, :new, :create]
   end 
   root "products#index"
 

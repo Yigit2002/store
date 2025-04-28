@@ -42,6 +42,9 @@
         <%= link_to "Yeni Ürün Ekle 🆕", new_product_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
         <%= link_to "Kategoriler 🗃️", categories_path, class: " text-lg text-green-600 hover:text-blue-800 font-medium transition-colors" %>
         <%= link_to "Yeni Kart Ekle 🎟️", new_card_path, class: " text-lg text-green-600 hover:text-blue-800 font-medium transition-colors" %>
+        <% elsif Current.user&.seller? %>
+          <%= link_to "Yeni Ürün Ekle 🆕", new_product_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
+          <%= link_to "Ürünlerim 📝", my_products_products_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
         <% end %>
       <%end%>
       <span class="text-lg text-gray-600">Bakiyeniz <%=Current.user.balance%>₺ 💸</span>
