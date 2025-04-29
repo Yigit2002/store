@@ -11,7 +11,7 @@ class Product < ApplicationRecord
   has_many :cart_items
   has_many :carts, through: :cart_items
 
-  belongs_to :seller, class_name: "User"
+  has_many :sellers, through: :product_sellers, class_name: 'User'
 
   has_one_attached :featured_image  
   has_rich_text :description

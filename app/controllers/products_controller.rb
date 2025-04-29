@@ -24,7 +24,7 @@ class ProductsController < ApplicationController
 
   def create
     @product = Product.new(product_params)
-    @product.seller = Current.user
+    @product.sellers << Current.user
     if @product.save
       redirect_to @product, notice: 'Ürün başarıyla eklendi.'
     else
@@ -75,7 +75,7 @@ class ProductsController < ApplicationController
   end
 
   def ensure_product_owner
-    unless @product.seller == Current.user
+    unless @product.sellers == Current.user
       redirect_to root_path, alert: "Bu ürünü düzenleme yetkiniz yok."
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_25_120526) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_28_121119) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -122,8 +122,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_25_120526) do
     t.integer "inventory_count"
     t.integer "category_id"
     t.decimal "price"
-    t.integer "seller_id"
-    t.index ["seller_id"], name: "index_products_on_seller_id"
+    t.integer "seller_ids"
+    t.index ["seller_ids"], name: "index_products_on_seller_ids"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -168,7 +168,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_25_120526) do
   add_foreign_key "favorites", "products"
   add_foreign_key "favorites", "users"
   add_foreign_key "products", "categories"
-  add_foreign_key "products", "users", column: "seller_id"
+  add_foreign_key "products", "users", column: "seller_ids"
   add_foreign_key "sessions", "users"
   add_foreign_key "subscribers", "products"
 end

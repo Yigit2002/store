@@ -8,7 +8,7 @@ class User < ApplicationRecord
   has_many :addresses, dependent: :destroy
   has_many :favorites, dependent: :destroy
   has_many :favorite_products, through: :favorites, source: :product
-  has_many :products, foreign_key: :seller_id, dependent: :destroy
+  has_many :products, foreign_key: :seller_ids, dependent: :destroy
 
   validates :first_name, :last_name, length: { maximum: 50 }, allow_blank: true
   validates :telefon_numarasi, length: {maximum: 15}, allow_blank: true
