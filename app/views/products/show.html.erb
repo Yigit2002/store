@@ -12,28 +12,25 @@
     <p class="text-gray-600"><%= @product.description %></p>
   </section>
   <p class="text-gray-600 font-semibold mb-4">Fiyat: <%= @product.price.present? ? number_to_currency(@product.price, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") : "Belirtilmemiş" %></p>
+  <p>Satıcı: <%= @product.sellers&.first_name %> <%= @product.sellers&.last_name %></p></p>
 
   <div class="text-center mb-4">
     <%= render "inventory", product: @product %>
-  </div>
-
-
-    <%= form_with(url: "/cart/add_to_cart", method: :post, class: "inline") do |form| %>
-            <%= form.hidden_field :product_id, value: @product.id %>
-            <p> ‏‎ </p>
-            <div class="quantity-wrapper" style="display: flex; align-items: center; justify-content: center; margin: 10px 0;">
-              <button type="button" class="quantity-btn" onclick="decreaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 4px 0 0 4px; font-weight: bold; cursor: pointer;">-</button>
-              <%= form.number_field :quantity, value: 1, min: 1, max:  @product.inventory_count, 
-                class: "quantity-input",
-                style: "width: 40px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 0; margin: 0; padding: 0; -webkit-appearance: none; -moz-appearance: textfield;",
-                readonly: true %>
-              <button type="button" class="quantity-btn" onclick="increaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 0 4px 4px 0; font-weight: bold; cursor: pointer;">+</button>
-            </div>
-            <p> ‏‎ </p>
-            <%= form.submit "Sepete Ekle 🏷️", class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
-        <% end %>
-
-  <div>
+    </div>
+      <%= form_with(url: "/cart/add_to_cart", method: :post, class: "inline") do |form| %>
+          <%= form.hidden_field :product_id, value: @product.id %>
+          <p> ‏‎ </p>
+          <div class="quantity-wrapper" style="display: flex; align-items: center; justify-content: center; margin: 10px 0;">
+            <button type="button" class="quantity-btn" onclick="decreaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 4px 0 0 4px; font-weight: bold; cursor: pointer;">-</button>
+            <%= form.number_field :quantity, value: 1, min: 1, max:  @product.inventory_count, 
+              class: "quantity-input",
+              style: "width: 40px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 0; margin: 0; padding: 0; -webkit-appearance: none; -moz-appearance: textfield;",
+              readonly: true %>
+            <button type="button" class="quantity-btn" onclick="increaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 0 4px 4px 0; font-weight: bold; cursor: pointer;">+</button>
+          </div>
+          <%= form.submit "Sepete Ekle 🏷️", class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
+    <% end %>
+    
     <% if Current.user.favorite_products.include?(@product) %>
       <p> ‏‎ </p>
       <%= button_to "Favorilerden Çıkar 💔", favorite_path(Current.user.favorites.find_by(product: @product)), method: :delete, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors" %>
@@ -41,13 +38,9 @@
       <p> ‏‎ </p>
       <%= button_to "Favorilere Ekle ❤️", favorites_path(product_id: @product.id), method: :post, class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
     <% end %>
-
-
-
-
     <!-- Yorum Yapma Formu -->
 <div class="bg-white shadow-lg rounded-lg p-6">
-  <h2 class="font-semibold mb-4 shadow-lg">Yorum Yap</h2>
+  <h2 class="font-semibold mb-4">Yorum Yap</h2>
   <br><br>
   
   <% if authenticated? %>
@@ -59,7 +52,7 @@
       
       <div class="mb-4">
         <br><br>
-        <label class="block text-gray-700 shadow-lg">Yorumunuz</label>
+        <label class="block text-gray-700">Yorumunuz</label>
         <%= form.text_area :content, class: "form-textarea w-full rounded", rows: 4 %>
       </div>
       

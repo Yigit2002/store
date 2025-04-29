@@ -14,7 +14,11 @@
         <p class="mb-2"><strong>Ad:</strong> <%= Current.user.first_name %></p>
         <p class="mb-2"><strong>Soyad:</strong> <%= Current.user.last_name %></p>
         <p class="mb-2"><strong>E-posta:</strong> <%= Current.user.email_address %></p>
-        <p class="mb-2"><strong>Hesap Tipi:</strong> <%= Current.user.role == "admin" ? "Yönetici" : "Müşteri" %></p>
+        <p class="mb-2"><strong>Hesap Tipi:</strong> <%= case Current.user.role
+  when "admin" then "Yönetici"
+  when "seller" then "Satıcı"
+  else "Müşteri"
+end %></p>
         <p class="mb-2"><strong>Bakiye:</strong> <%= number_to_currency(Current.user.balance, unit: "₺") %></p>
         <p class="mb-2"><strong>Telefon Nuraması:</strong> <%= Current.user.telefon_numarasi%></p>
       </div>
