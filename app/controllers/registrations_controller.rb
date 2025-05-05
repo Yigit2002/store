@@ -8,8 +8,10 @@ class RegistrationsController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      start_new_session_for @user
-      redirect_to root_path, notice: "Kayit Başarili"
+      if params[:become_seller] == '1'
+        @user.create_seller!(name: @user.first_name)
+      end
+      redirect_to root_path, notice: "Kayıt başarılı!"
     else
       render :new
     end
@@ -18,6 +20,6 @@ class RegistrationsController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:email_address,:password,:password_confirmation,:first_name,:last_name,:address,:city,:country, :telefon_numarasi)
+    params.require(:user).permit(:email_address,:password,:password_confirmation,:first_name,:last_name,:telefon_numarasi)
   end
 end

@@ -34,10 +34,15 @@
         <%= link_to "Profilim 👤", profile_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
 
         <% if authenticated? %>
+          <% if Current.user.seller? %>
+            <%= link_to "Satıcı Hesabım",seller_path(Current.user.seller),class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
+          <% else %>
+            <%= link_to "Satıcı Ol", become_seller_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
+          <% end %>
           <% unless Current.user.admin? %>
             <%= link_to "Sepet 🛒", cart_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
           <% end %>
-        <% if Current.user.admin? %>
+        <% if Current.user.admin? %> 
         <%= link_to "Kullanıcılar 👥", users_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
         <%= link_to "Yeni Ürün Ekle 🆕", new_product_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
         <%= link_to "Kategoriler 🗃️", categories_path, class: " text-lg text-green-600 hover:text-blue-800 font-medium transition-colors" %>

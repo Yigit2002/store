@@ -11,6 +11,9 @@ class Product < ApplicationRecord
   has_many :cart_items
   has_many :carts, through: :cart_items
 
+  has_many :seller_products, dependent: :destroy
+  has_many :sellers, through: :seller_products
+
   has_one_attached :featured_image  
   has_rich_text :description
   belongs_to :category
@@ -29,5 +32,5 @@ class Product < ApplicationRecord
     subscribers.each do |subscriber|
       ProductMailer.with(product: self, subscriber: subscriber).in_stock.deliver_now
     end
-  end
+  end 
 end

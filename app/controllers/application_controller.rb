@@ -13,7 +13,10 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
+    if session[:sessionable_id]
+        @current_user ||= User.find_by(id: session[:sessionable_id]) || Seller.find_by(id: session[:sessionable_id])
+        Current.user = @current_user
+    end
   end
   
   def switch_locale(&action)

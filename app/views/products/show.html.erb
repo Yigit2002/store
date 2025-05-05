@@ -1,7 +1,6 @@
 <p class="mb-4">
   <%= link_to "← Geri", products_path, class: "text-blue-500 hover:underline" %>
 </p>
-
 <section class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
   <% if @product.featured_image.attached? %>
     <%= image_tag @product.featured_image, class: "w-64 h-auto mx-auto mb-4 rounded-md shadow" %>
@@ -12,11 +11,15 @@
     <p class="text-gray-600"><%= @product.description %></p>
   </section>
   <p class="text-gray-600 font-semibold mb-4">Fiyat: <%= @product.price.present? ? number_to_currency(@product.price, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") : "Belirtilmemiş" %></p>
-
+  <h3>Satıcılar:</h3>
+<ul>
+  <% @product.sellers.each do |seller| %>
+    <li><%= seller.name %></li>
+  <% end %>
+</ul>
   <div class="text-center mb-4">
     <%= render "inventory", product: @product %>
   </div>
-
 
     <%= form_with(url: "/cart/add_to_cart", method: :post, class: "inline") do |form| %>
             <%= form.hidden_field :product_id, value: @product.id %>
@@ -32,7 +35,6 @@
             <p> ‏‎ </p>
             <%= form.submit "Sepete Ekle 🏷️", class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
         <% end %>
-
   <div>
     <% if Current.user.favorite_products.include?(@product) %>
       <p> ‏‎ </p>

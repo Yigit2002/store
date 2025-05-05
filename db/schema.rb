@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_21_125300) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_29_133622) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -122,15 +122,36 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_21_125300) do
     t.integer "inventory_count"
     t.integer "category_id"
     t.decimal "price"
+    t.integer "seller_ids"
+    t.index ["seller_ids"], name: "index_products_on_seller_ids"
+  end
+
+  create_table "seller_products", force: :cascade do |t|
+    t.integer "seller_id", null: false
+    t.integer "product_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_seller_products_on_product_id"
+    t.index ["seller_id"], name: "index_seller_products_on_seller_id"
+  end
+
+  create_table "sellers", force: :cascade do |t|
+    t.string "name"
+    t.string "email_address", null: false
+    t.string "password_digest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email_address"], name: "index_sellers_on_email_address", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.string "sessionable_type", null: false
+    t.integer "sessionable_id", null: false
     t.string "ip_address"
     t.string "user_agent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_sessions_on_user_id"
+    t.index ["sessionable_type", "sessionable_id"], name: "index_sessions_on_sessionable"
   end
 
   create_table "subscribers", force: :cascade do |t|
@@ -150,7 +171,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_21_125300) do
     t.decimal "balance", precision: 10, scale: 2, default: "0.0", null: false
     t.string "first_name"
     t.string "last_name"
-    t.string "username"
     t.string "telefon_numarasi"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
@@ -167,6 +187,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_21_125300) do
   add_foreign_key "favorites", "products"
   add_foreign_key "favorites", "users"
   add_foreign_key "products", "categories"
-  add_foreign_key "sessions", "users"
+  add_foreign_key "products", "users", column: "seller_ids"
+  add_foreign_key "seller_products", "products"
+  add_foreign_key "seller_products", "sellers"
   add_foreign_key "subscribers", "products"
 end

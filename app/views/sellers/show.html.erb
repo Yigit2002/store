@@ -1,0 +1,15 @@
+<h1 class="text-xl font-bold text-gray-800"><%= @seller.name %></h1>
+<p class= "block text-black-700 font-medium mb-2">Email: <%= @seller.user.email_address %></p>
+<p>Telefon: <%= @seller.user.telefon_numarasi %></p>
+
+<h2>Satıcının Ürünleri</h2>
+
+<div class="products-list">
+  <% @product_sellers.each do |product_seller| %>
+    <div class="bg-white hover:text-blue-800 hover:bg-blue-100 shadow-md rounded-lg p-6 flex flex-col items-center hover:bg-gray-100 cursor-pointer transition-colors">
+      <h3><%= link_to product_seller.product.name, product_path(product_seller.product) %></h3>
+      <p>Fiyat: <%= number_to_currency(product_seller.price, unit: "₺") %></p>
+      <p>Stok: <%= product_seller.inventory_count %></p>
+    </div>
+  <% end %>
+</div>

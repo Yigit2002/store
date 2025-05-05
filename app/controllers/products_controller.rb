@@ -1,6 +1,7 @@
 class ProductsController < ApplicationController
 
   def index
+    @products = Product.includes(product_sellers: :seller).all
     if params[:category_id]
       @category = Category.find(params[:category_id])
       @products = @category.products
@@ -11,6 +12,7 @@ class ProductsController < ApplicationController
 
   def show
     @product = Product.find(params[:id])
+    @product_sellers = @product.product_sellers.includes(:seller)
   end
 
   def new

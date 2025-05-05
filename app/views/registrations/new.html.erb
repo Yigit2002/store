@@ -24,22 +24,9 @@
     </div>
 
     <div class="field">
-      <p> ‏‎ </p>
-      <%= form.label :address, "Adres" %>
-      <%= form.text_area :address, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
-
-    <div class="field">
-      <p> ‏‎ </p>
-      <%= form.label :city, "Şehir" %>
-      <%= form.text_field :city, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
-
-    <div class="field">
-      <p> ‏‎ </p>
-      <%= form.label :country, "Ülke" %>
-      <%= form.text_field :country, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-    </div>
+    <%= label_tag :become_seller, "Satıcı olmak istiyorum" %>
+    <%= check_box_tag :become_seller, '1', false %>
+  </div>
 
     <div class="my-5">
       <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "E-posta adresi giriniz", value: params[:email_address], class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>

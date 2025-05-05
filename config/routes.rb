@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "sellers/index"
+  get "sellers/show"
   get "users/index"
   get "users/update_balance"
   get "carts/show"
@@ -10,6 +12,7 @@ Rails.application.routes.draw do
   get "privacy_policy", to: "pages#privacy_policy"
   get 'profile', to: 'users#show_profile', as: 'profile'
   get 'profile/edit', to: 'users#edit_profile', as: 'edit_profile'
+  get 'become_seller', to: 'sellers#new', as: :become_seller
   patch 'profile/update', to: 'users#update_profile', as: 'update_profile'
 
   # get 'home/index'
@@ -47,7 +50,8 @@ Rails.application.routes.draw do
 
   get "admin/cards", to: "cards#admin_index", as: :admin_cards
 
-
+  resources :products
+  resources :sellers, only: [:new, :create, :index, :show]
 
   resources :categories, only: [:index, :new, :create]
   
