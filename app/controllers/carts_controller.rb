@@ -23,16 +23,15 @@ class CartsController < ApplicationController
 
   def add_to_cart
     product = Product.find(params[:product_id])
-    cart_item = @cart.cart_items.find_by(product: product)
-
+    seller_product = SellerProduct.find_by(product: product.id, user_id: params[:seller_id])
+    cart_item = @cart.cart_items.find_by(seller_product_id: seller_product.id)
     if cart_item
       cart_item.quantity += params[:quantity].to_i
     else
-      cart_item = @cart.cart_items.build(product: product, quantity: params[:quantity].to_i)
+      cart_item = @cart.cart_items.build(quantity: params[:quantity].to_i, seller_product_id: seller_product.id)
     end
-
     respond_to do |format|
-      if cart_item.quantity <= product.inventory_count && cart_item.save
+      if cart_item.quantity <= cart_item.seller_product&.stock && cart_item.save
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.append("messages", "<div class='bg-green-100 text-green-800 p-4 rounded-md mb-4 fixed top-0 w-full z-50' id='notice_#{Time.now.to_i}'>Ürün sepete eklendi.</div><script>setTimeout(() => {document.getElementById('notice_#{Time.now.to_i}').remove();}, 3000);</script>"),
@@ -63,27 +62,33 @@ class CartsController < ApplicationController
   end
 
   def checkout
-    total_price = @cart.cart_items.sum { |item| item.product.price * item.quantity }
+    @cart = Current.user.cart
+    
+    # Toplam fiyat hesaplama
+    total_price = @cart.cart_items.sum do |item|
+      item.seller_product.price * item.quantity
+    end
+    
     @address = Current.user.addresses.find_by(id: params[:address_id])
-
+    
+    # Bakiye kontrolü
     if Current.user.balance >= total_price
-      # Stok ve bakiye kontrolü
+      # Stok ve satın alma işlemleri
       @cart.cart_items.each do |item|
-        product = item.product
-        if product.inventory_count < item.quantity
-          redirect_to cart_path, alert: "#{product.name} için yeterli stok yok."
-          return
+        seller_product = item.seller_product
+        
+        if seller_product.stock >= item.quantity
+          # Stoktan düş
+          seller_product.update!(stock: seller_product.stock - item.quantity)
+        else
+          return redirect_to cart_path, alert: "#{item.product.name} ürünü için yeterli stok yok!"
         end
       end
-
-      # Satın alma işlemi
-      @cart.cart_items.each do |item|
-        product = item.product
-        product.update!(inventory_count: product.inventory_count - item.quantity)
-      end
-
+      
+      # Bakiye düşme ve sepeti temizleme
       Current.user.update!(balance: Current.user.balance - total_price)
       @cart.cart_items.destroy_all
+      
       redirect_to products_path, notice: "Satın alma işlemi başarıyla tamamlandı."
     else
       redirect_to cart_path, alert: "Bakiyeniz yetersiz!"

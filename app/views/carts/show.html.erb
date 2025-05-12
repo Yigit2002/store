@@ -11,10 +11,10 @@
         <% @cart_items.each do |item| %>
           <div class="flex items-center justify-between mb-4 border-b pb-2">
             <div>
-              <h3 class="text-lg font-semibold text-gray-800"><%= item.product.name %></h3>
+              <h3 class="text-lg font-semibold text-gray-800"><%= item.seller_product&.product&.name %></h3>
               <p class="text-gray-600">Adet: <%= item.quantity %></p>
-              <p class="text-gray-600">Birim Fiyat: <%= number_to_currency(item.product.price, unit: "₺", format: "%n %u", separator: ",") %></p>
-              <p class="text-gray-600">Toplam: <%= number_to_currency(item.product.price * item.quantity, unit: "₺", format: "%n %u", separator: ",") %></p>
+              <p class="text-gray-600">Birim Fiyatı: <%= number_to_currency(item.seller_product&.price, unit: "₺", format: "%n %u", separator: ",") %>              
+              <p class="text-gray-600">Toplam: <%= number_to_currency(item.seller_product&.price.to_f * item.quantity.to_f, unit: "₺", format: "%n %u") %></p>
             </div>
             <div class="flex items-center">
               <%= button_to "-", update_quantity_cart_path(item, quantity: item.quantity - 1), method: :patch, class: "quantity-btn" %>
@@ -28,7 +28,7 @@
         <div class="mt-4 text-xl font-semibold text-gray-800">
           Kargo: <%= number_to_currency(32.99, unit: "₺", format: "%n %u", separator: ",") %> KDV: <%= number_to_currency(12.99, unit: "₺", format: "%n %u", separator: ",") %>
         </div>
-        <p class="text-bold-gray-600 mb-4">Toplam: <%= number_to_currency(@cart_items.sum { |item| item.product.price * item.quantity } + 32.99 + 12.99, unit: "₺", format: "%n %u", separator: ",") %></p> 
+        <p class="text-bold-gray-600 mb-4">Toplam: <%= number_to_currency(@cart_items.sum { |item| item.seller_product&.price.to_f * item.quantity } + 32.99 + 12.99, unit: "₺", format: "%n %u", separator: ",") %></p> 
         
         <div class="flex space-x-4 mt-6">
           <%= button_to "Tümünü Sil", clear_cart_path, method: :delete, class: "bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600" %>

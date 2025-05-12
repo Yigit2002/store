@@ -9,8 +9,8 @@
       <%= link_to product_path(product), class: "w-full h-full flex flex-col items-center" do %>
         <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center"><%= product.name %></h3>
         <%= image_tag product.featured_image, class: "w-48 h-32 object-cover rounded-md mb-4" %>
-        <p class="text-gray-600 mb-4">Stok: <%= product.inventory_count %></p>
-        <p class="text-gray-600 mb-4">Fiyat: <%= product.price.present? ? number_to_currency(product.price, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") : "Belirtilmemiş" %></p>
+        <p class="text-gray-600 mb-4">Stok: <%= product.seller_products.first.stock %></p>
+        <p class="text-gray-600 mb-4">Fiyat: <%= product.seller_products.any? ? number_to_currency(product.seller_products.first.price, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") : "Belirtilmemiş" %></p>
         <div class="flex justify-center space-x-4">
           <%= link_to "Düzenle", edit_product_path(product), class: "bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded" %>
           <%= button_to "Sil", product_path(product), method: :delete, data: { turbo_confirm: "Emin misin?" }, class: "bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded" %>

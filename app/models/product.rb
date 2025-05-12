@@ -10,8 +10,9 @@ class Product < ApplicationRecord
 
   has_many :cart_items
   has_many :carts, through: :cart_items
-
-  has_many :sellers, through: :product_sellers, class_name: 'User'
+  
+  has_many :seller_products
+  has_many :sellers, through: :seller_products, source: :user
 
   has_one_attached :featured_image  
   has_rich_text :description
@@ -19,9 +20,8 @@ class Product < ApplicationRecord
   
   
   validates :name, presence: true
-  validates :inventory_count, numericality: { greater_than_or_equal_to: 0 }
   validates :category_id, presence: true
-  validates :seller_id, presence: true
+  # validates :seller_id, presence: true
 
   after_update_commit :notify_subscribers, if: :back_in_stock?
 

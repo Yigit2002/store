@@ -11,12 +11,6 @@
 # Kategorileri oluştur
 # db/seeds.rb
 
-# Önce mevcut verileri temizleyelim (opsiyonel, dikkatli kullanın)
-Favorite.delete_all
-Product.delete_all
-Category.delete_all
-User.delete_all
-
 # 1. Kategoriler Oluşturma
 puts "Kategoriler oluşturuluyor..."
 categories = [
@@ -24,7 +18,8 @@ categories = [
   { name: "Pantolon" },
   { name: "Gözlük" },
   { name: "Ceket" },
-  { name: "Bardak" }
+  { name: "Bardak" },
+  { name: "Teknoloji" }
 ]
 
 categories.each do |category|
@@ -58,6 +53,7 @@ puts "Kullanıcılar oluşturuluyor..."
 users = [
   { email: "ykahraman@hotmail.com", password: "123456", password_confirmation: "123456" },
   { email: "ilkertoklu.dev@gmail.com", password: "123456", password_confirmation: "123456" }
+  { email: "kenan@gmail.com", password: "123456", password_confirmation: "123456" }
 ]
 
 users.each do |user|

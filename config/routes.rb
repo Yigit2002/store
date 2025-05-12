@@ -53,6 +53,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :products do
+    member do
+      post 'select_seller'
+    end
+  end
+
   resources :categories, only: [:index, :new, :create]
   
   delete :clear_cart, to: "carts#clear_cart"

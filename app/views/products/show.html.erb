@@ -2,112 +2,198 @@
   <%= link_to "← Geri", products_path, class: "text-blue-500 hover:underline" %>
 </p>
 
-<section class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
-  <% if @product.featured_image.attached? %>
-    <%= image_tag @product.featured_image, class: "w-64 h-auto mx-auto mb-4 rounded-md shadow" %>
-  <% end %>
+<section class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md">
+  <div class="flex flex-wrap">
+    <!-- Sol taraf - Ana içerik -->
+    <div class="w-full lg:w-7/12">
+      <% if @product.featured_image.attached? %>
+        <%= image_tag @product.featured_image, class: "w-64 h-auto mx-auto mb-4 rounded-md shadow" %>
+      <% end %>
 
-  <section class="text-center mb-6">
-    <h1 class="text-2xl font-semibold text-gray-800 mb-2"><%= @product.name %></h1>
-    <p class="text-gray-600"><%= @product.description %></p>
-  </section>
-  <p class="text-gray-600 font-semibold mb-4">Fiyat: <%= @product.price.present? ? number_to_currency(@product.price, unit: " ₺", format: "%n%u", separator: ",", delimiter: ".") : "Belirtilmemiş" %></p>
-  <p>Satıcı: <%= @product.sellers&.first_name %> <%= @product.sellers&.last_name %></p></p>
+      <section class="text-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-800 mb-2"><%= @product.name %></h1>
+        <p class="text-gray-600"><%= @product.description %></p>
+      </section>
 
-  <div class="text-center mb-4">
-    <%= render "inventory", product: @product %>
-    </div>
+      <div class="text-center mb-4">
+        <%= render "inventory", product: @product %>
+      </div>
+
       <%= form_with(url: "/cart/add_to_cart", method: :post, class: "inline") do |form| %>
-          <%= form.hidden_field :product_id, value: @product.id %>
-          <p> ‏‎ </p>
-          <div class="quantity-wrapper" style="display: flex; align-items: center; justify-content: center; margin: 10px 0;">
-            <button type="button" class="quantity-btn" onclick="decreaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 4px 0 0 4px; font-weight: bold; cursor: pointer;">-</button>
-            <%= form.number_field :quantity, value: 1, min: 1, max:  @product.inventory_count, 
-              class: "quantity-input",
-              style: "width: 40px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 0; margin: 0; padding: 0; -webkit-appearance: none; -moz-appearance: textfield;",
-              readonly: true %>
-            <button type="button" class="quantity-btn" onclick="increaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 0 4px 4px 0; font-weight: bold; cursor: pointer;">+</button>
-          </div>
-          <%= form.submit "Sepete Ekle 🏷️", class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
-    <% end %>
-    
-    <% if Current.user.favorite_products.include?(@product) %>
-      <p> ‏‎ </p>
-      <%= button_to "Favorilerden Çıkar 💔", favorite_path(Current.user.favorites.find_by(product: @product)), method: :delete, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors" %>
-    <% else %>
-      <p> ‏‎ </p>
-      <%= button_to "Favorilere Ekle ❤️", favorites_path(product_id: @product.id), method: :post, class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
-    <% end %>
-    <!-- Yorum Yapma Formu -->
-<div class="bg-white shadow-lg rounded-lg p-6">
-  <h2 class="font-semibold mb-4">Yorum Yap</h2>
-  <br><br>
-  
-  <% if authenticated? %>
-    <%= form_with(model: [@product, Comment.new], local: true) do |form| %>
-      <div class="mb-4">
-        <label class="block text-gre-700">Değerlendirme</label>
-        <%= form.select :rating, options_for_select([["Puan Verin", nil], ["1", 1], ["2", 2], ["3", 3], ["4", 4], ["5", 5]]), {}, class: "form-select w-full rounded shadow-lg" %>
-      </div>
+        <%= form.hidden_field :product_id, value: @product.id %>
+        <p> ‏‎ </p>
+        <% if @product.sellers.any? %>
+            <div>
+              <%= form.label :seller_id, "Satıcı Seçin", class: "block text-sm font-medium text-gray-700 mb-1" %>
+              <%= form.collection_select :seller_id , @product.seller_products, :user_id, :seller_info, { prompt: "Bir satıcı seçin" }, class: "block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+            </div>     
+            <div class="text-center font-medium mt-4">
+              <span id="seller-price" class="text-lg text-green-600"></span>
+              <p id="seller-stock" class="text-sm text-gray-500 mt-2"></p>
+            </div>
+        <% else %>
+          <p class="text-gray-500 italic text-center">Bu ürün için satıcı bulunmamaktadır.</p>
+        <% end %>
+        <div class="quantity-wrapper" style="display: flex; align-items: center; justify-content: center; margin: 10px 0;">
+          <button type="button" class="quantity-btn" onclick="decreaseQty(this)" style="width: 30px; height: 30px; background:rgb(243, 241, 241); border: 1px solid #ddd; border-radius: 4px 0 0 4px; font-weight: bold; cursor: pointer;">-</button>
+          <%= form.number_field :quantity,value: 1, min: 1, max: @product.seller_products.sum(:stock), 
+            class: "quantity-input",
+            style: "width: 40px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 0; margin: 0; padding: 0; -webkit-appearance: none; -moz-appearance: textfield;",
+            readonly: true %>
+          <button type="button" class="quantity-btn" onclick="increaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 0 4px 4px 0; font-weight: bold; cursor: pointer;">+</button>
+        </div>
+        <%= form.submit "Sepete Ekle 🏷️", class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
+      <% end %>
       
-      <div class="mb-4">
+      <% if Current.user.favorite_products.include?(@product) %>
+        <p> ‏‎ </p>
+        <%= button_to "Favorilerden Çıkar 💔", favorite_path(Current.user.favorites.find_by(product: @product)), method: :delete, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors" %>
+      <% else %>
+        <p> ‏‎ </p>
+        <%= button_to "Favorilere Ekle ❤️", favorites_path(product_id: @product.id), method: :post, class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
+      <% end %>
+
+      <!-- Yorum Yapma Formu -->
+      <div class="bg-white shadow-lg rounded-lg p-6 mt-8">
+        <h2 class="font-semibold mb-4">Yorum Yap</h2>
         <br><br>
-        <label class="block text-gray-700">Yorumunuz</label>
-        <%= form.text_area :content, class: "form-textarea w-full rounded", rows: 4 %>
-      </div>
-      
-      <%= form.submit "Yorum Gönder", class: "bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded" %>
-    <% end %>
-  <% else %>
-    <p class="text-gray-500">Yorum yapmak için <a href="/users/sign_in" class="text-blue-500">giriş</a> yapmalısınız.</p>
-  <% end %>
-</div>
-
-<!-- Yorumların Listelenmesi -->
-<div class="mt-8">
-  <h2 class="font-semibold mb-4">Yorumlar</h2>
-  
-  <% if @product.comments.any? %>
-    <% @product.comments.each do |comment| %>
-      <div class="border-b py-4">
-        <div class="flex justify-between items-center mb-2">
-          <span class="font-semibold">
-            <% if comment.user.present? %>
-              <%= comment.user.first_name %> <%= comment.user.last_name %>
-            <% else %>
-              Anonim
-            <% end %>
-          </span>
-          
-          <% if authenticated? && (Current.user.id == comment.user_id || Current.user.admin?) %>
-            <%= link_to "Sil", product_comment_path(@product, comment), data: { turbo_method: :delete, turbo_confirm: "Yorumu silmek istediğinize emin misiniz?" }, class: "text-red-500" %>
-          <% end %>
-        </div>
         
-        <!-- Yıldız Derecelendirmesi -->
-        <div class="flex items-center mb-2">
-          <% rating = comment.rating || 0 %>
-          <% rating.times do %>
-            <span class="text-yellow-400">★</span>
+        <% if authenticated? %>
+          <%= form_with(model: [@product, Comment.new], local: true) do |form| %>
+            <div class="mb-4">
+              <label class="block text-gre-700">Değerlendirme</label>
+              <%= form.select :rating, options_for_select([["Puan Verin", nil], ["1", 1], ["2", 2], ["3", 3], ["4", 4], ["5", 5]]), {}, class: "form-select w-full rounded shadow-lg" %>
+            </div>
+            
+            <div class="mb-4">
+              <br><br>
+              <label class="block text-gray-700">Yorumunuz</label>
+              <%= form.text_area :content, class: "form-textarea w-full rounded", rows: 4 %>
+            </div>
+            
+            <%= form.submit "Yorum Gönder", class: "bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded" %>
           <% end %>
-          <% (5 - rating).times do %>
-            <span class="text-gray-300">☆</span>
-          <% end %>
-        </div>
-        
-        <p class="text-gray-700"><%= comment.content %></p>
+        <% else %>
+          <p class="text-gray-500">Yorum yapmak için <a href="/users/sign_in" class="text-blue-500">giriş</a> yapmalısınız.</p>
+        <% end %>
       </div>
-    <% end %>
-  <% else %>
-    <p class="text-gray-500">Henüz yorum yok. İlk yorumu siz yapın!</p>
-  <% end %>
-</div>
 
-  <% if authenticated? && Current.user.admin? %>
-    <div class="flex justify-center space-x-4">
-      <%= link_to "Düzenle", edit_product_path(@product), class: "bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded" %>
-      <%= button_to "Sil", @product, method: :delete, data: { turbo_confirm: "Emin misin?" }, class: "bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded" %>
+      <!-- Yorumların Listelenmesi -->
+      <div class="mt-8">
+        <h2 class="font-semibold mb-4">Yorumlar</h2>
+        
+        <% if @product.comments.any? %>
+          <% @product.comments.each do |comment| %>
+            <div class="border-b py-4">
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-semibold">
+                  <% if comment.user.present? %>
+                    <%= comment.user.first_name %> <%= comment.user.last_name %>
+                  <% else %>
+                    Anonim
+                  <% end %>
+                </span>
+                
+                <% if authenticated? && (Current.user.id == comment.user_id || Current.user.admin?) %>
+                  <%= link_to "Sil", product_comment_path(@product, comment), data: { turbo_method: :delete, turbo_confirm: "Yorumu silmek istediğinize emin misiniz?" }, class: "text-red-500" %>
+                <% end %>
+              </div>
+              
+              <!-- Yıldız Derecelendirmesi -->
+              <div class="flex items-center mb-2">
+                <% rating = comment.rating || 0 %>
+                <% rating.times do %>
+                  <span class="text-yellow-400">★</span>
+                <% end %>
+                <% (5 - rating).times do %>
+                  <span class="text-gray-300">☆</span>
+                <% end %>
+              </div>
+              
+              <p class="text-gray-700"><%= comment.content %></p>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-gray-500">Henüz yorum yok. İlk yorumu siz yapın!</p>
+        <% end %>
+      </div>
+
+      <% if authenticated? && Current.user.admin? %>
+        <div class="flex justify-center space-x-4 mt-8">
+          <%= link_to "Düzenle", edit_product_path(@product), class: "bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded" %>
+          <%= button_to "Sil", @product, method: :delete, data: { turbo_confirm: "Emin misin?" }, class: "bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded" %>
+        </div>
+      <% end %>
     </div>
-  <% end %>
+
+    <!-- Sağ taraf - Satıcı seçim bölümü -->
+    <div class="w-full lg:w-4/12 mt-6 lg:mt-0">
+      <div class="sticky top-4">
+        <h3 class="font-bold text-lg mb-3 text-center">Satıcı Seçin</h3>
+        
+        <div class="mt-8 border-t pt-4">
+          <%= form_with(url: "/cart/add_to_cart", method: :post) do |form| %>
+            <%= form.hidden_field :product_id, value: @product.id %>
+            <%= form.hidden_field :quantity, value: 1 %>
+            <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
+<script>
+  // Satıcı seçildiğinde fiyat ve stok bilgisini güncelleyen JavaScript
+  document.addEventListener('DOMContentLoaded', function() {
+    const sellerSelect = document.querySelector('select[name="seller_id"]');
+    const sellerPriceElement = document.getElementById('seller-price');
+    const sellerStockElement = document.getElementById('seller-stock');
+    
+    // Satıcı bilgilerini JSON olarak hazırlayalım
+    const sellerData = {
+      <% @product.seller_products.each do |sp| %>
+        "<%= sp.user_id %>": {
+          price: "<%= sp.price.to_f %> TL",
+          stock: "<%= sp.stock %> adet var"
+        },
+      <% end %>
+    };
+
+    // Sayfa yüklendiğinde varsayılan değerleri göster
+    if (sellerSelect && sellerSelect.value && sellerSelect.value !== "") {
+      updateSellerInfo(sellerSelect.value);
+    }
+
+    // Satıcı seçimi değiştiğinde bilgileri güncelle
+    if (sellerSelect) {
+      sellerSelect.addEventListener('change', function() {
+        updateSellerInfo(this.value);
+      });
+    }
+
+    function updateSellerInfo(sellerId) {
+      if (sellerData[sellerId]) {
+        if (sellerPriceElement) sellerPriceElement.textContent = sellerData[sellerId].price;
+        if (sellerStockElement) sellerStockElement.textContent = sellerData[sellerId].stock;
+      }
+    }
+  });
+
+  // Ürün miktarını artırma/azaltma fonksiyonları
+  function increaseQty(btn) {
+    const input = btn.previousElementSibling;
+    const max = parseInt(input.getAttribute('max') || 999);
+    const value = parseInt(input.value);
+    if (value < max) {
+      input.value = value + 1;
+    }
+  }
+
+  function decreaseQty(btn) {
+    const input = btn.nextElementSibling;
+    const value = parseInt(input.value);
+    if (value > 1) {
+      input.value = value - 1;
+    }
+  }
+</script>

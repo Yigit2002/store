@@ -1,13 +1,13 @@
-<% if product.inventory_count? %>
-    <p><%= product.inventory_count%> adet var</p>
+<% if product.seller_products.sum(:stock) > 0 %>
+  <p>Toplam <%= product.seller_products.sum(:stock) %> adet var</p>
 <% else %>
     <div class="mt-4">
-                    <h3 class="text-lg font-medium text-gray-700 mb-2">Stokta Olunca Haberdar Ol</h3>
-                    <%= form_with model: [@product, Subscriber.new] do |form| %>
-                        <div class="flex space-x-2">
-                            <%= form.email_field :email, placeholder: "E-posta adresinizi girin (you@example.com)", required: true, class: "w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %>
-                            <%= form.submit "Kaydet", class: "bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer" %>
-                        </div>
-                    <% end %>
-                </div>
+        <h3 class="text-lg font-medium text-gray-700 mb-2">Stokta Olunca Haberdar Ol</h3>
+        <%= form_with model: [@product, Subscriber.new] do |form| %>
+            <div class="flex space-x-2">
+                <%= form.email_field :email, placeholder: "E-posta adresinizi girin (you@example.com)", required: true, class: "w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+                <%= form.submit "Kaydet", class: "bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer" %>
+            </div>
+        <% end %>
+     </div>
 <%end%>

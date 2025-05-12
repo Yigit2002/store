@@ -5,6 +5,7 @@ class ProductsController < ApplicationController
   before_action :ensure_seller, only: [:my_products]
 
   def index
+    @products = Product.includes(:seller_products).all
     if params[:category_id]
       @category = Category.find(params[:category_id])
       @products = @category.products
@@ -24,14 +25,19 @@ class ProductsController < ApplicationController
 
   def create
     @product = Product.new(product_params)
-    @product.sellers << Current.user
     if @product.save
+      SellerProduct.create!(
+        product: @product,
+        user: Current.user,
+        price: params[:product][:price],
+        stock: params[:product][:stock]
+      )
       redirect_to @product, notice: 'Ürün başarıyla eklendi.'
     else
       render :new, status: :unprocessable_entity
     end
   end
-
+  
   def edit
     @product = Product.find(params[:id])
   end
@@ -52,10 +58,43 @@ class ProductsController < ApplicationController
   end
 
   def my_products
-    @products = Current.user.products
+    @products = Current.user.seller_products.includes(:product).map(&:product)
   end
-
-  private
+  
+  def select_seller
+    @product = Product.find(params[:id])
+    seller_product = @product.seller_products.find_by(user_id: params[:seller_id])
+  
+    if seller_product
+      selected_inventory = seller_product.stock
+      selected_price = seller_product.price
+  
+      if selected_inventory > 0
+        # Sepete ekle
+        cart = Current.user.cart || Current.user.create_cart
+        cart_item = cart.cart_items.find_or_initialize_by(seller_product_id: seller_product.id)
+        cart_item.quantity ||= 0
+        cart_item.quantity += 1
+  
+        # Stok kontrolü
+        if selected_inventory >= cart_item.quantity
+          if cart_item.save
+            redirect_to cart_path, notice: "Ürün sepete eklendi!"
+          else
+            redirect_to @product, alert: "Sepete eklenemedi: #{cart_item.errors.full_messages.join(', ')}"
+          end
+        else
+          redirect_to @product, alert: "#{seller_products.user.full_name} için yeterli stok yok!"
+        end
+      else
+        redirect_to @product, alert: "Seçilen satıcıda stok kalmadı!"
+      end
+    else
+      redirect_to @product, alert: "Geçersiz satıcı seçimi!"
+    end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to @product, alert: "Seçilen satıcı bu ürün için geçerli değil!"
+  end
 
 
   private
@@ -68,6 +107,7 @@ class ProductsController < ApplicationController
     params.require(:product).permit(:name, :description, :featured_image, :inventory_count, :category_id, :price)
   end
 
+
   def ensure_seller
     unless Current.user.seller?
       redirect_to root_path, alert: "Bu işlem için satıcı olmanız gerekiyor."
@@ -75,8 +115,7 @@ class ProductsController < ApplicationController
   end
 
   def ensure_product_owner
-    unless @product.sellers == Current.user
-      redirect_to root_path, alert: "Bu ürünü düzenleme yetkiniz yok."
-    end
+    @product = Product.find(params[:id])
+    redirect_to root_path, alert: "Bu ürünü düzenleme yetkiniz yok." unless Current.user&.admin? || @product.sellers.include?(Current.user)
   end
 end
