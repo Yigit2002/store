@@ -30,12 +30,12 @@
 
           <div class="mb-4 flex items-center">
           <span class="inline-block bg-gray-100 p-2 rounded-l border border-r-0 text-gray-700">+90</span>
-          <%= form.text_field :telefon_numarasi, value: Current.user.telefon_numarasi&.sub(/^\+90/, ''), placeholder: "5551234567", pattern: "\\d{10}", maxlength: 10, class: "w-full p-2 border rounded-r focus:outline-none focus:ring-2 focus:ring-blue-500", required: true %>
+          <%= form.text_field :gsm, value: Current.user.gsm&.sub(/^\+90/, ''), placeholder: "5551234567", pattern: "\\d{10}", maxlength: 10, class: "w-full p-2 border rounded-r focus:outline-none focus:ring-2 focus:ring-blue-500", required: true %>
         </div>
 
           <div class="mb-4">
-            <%= form.label :email_address, "E-posta (sadece admin düzenleyebilir)", class: " text-bold block mb-1" %>
-            <%= form.email_field :email_address, disabled: true, class: "w-full p-2 border rounded" %>
+            <%= form.label :email, "E-posta (sadece admin düzenleyebilir)", class: " text-bold block mb-1" %>
+            <%= form.email_field :email, disabled: true, class: "w-full p-2 border rounded" %>
           </div>
         </div>
         

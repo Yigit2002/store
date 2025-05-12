@@ -10,12 +10,19 @@ class User < ApplicationRecord
   has_many :favorite_products, through: :favorites, source: :product
   has_many :products, foreign_key: :seller_ids, dependent: :destroy
 
+  has_many :seller_products
+  has_many :products, through: :seller_products
+
   validates :first_name, :last_name, length: { maximum: 50 }, allow_blank: true
-  validates :telefon_numarasi, length: {maximum: 15}, allow_blank: true
+  validates :gsm, length: {maximum: 15}, allow_blank: true
 
   enum :role, { customer: 0, admin: 1, seller: 2 }, default: :customer
 
   has_one :cart, dependent: :destroy
+
+  def full_name
+    "#{first_name} #{last_name}"
+  end
   
-  normalizes :email_address, with: ->(e) { e.strip.downcase }
+  normalizes :email, with: ->(e) { e.strip.downcase }
 end

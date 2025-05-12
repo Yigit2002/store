@@ -15,7 +15,7 @@
     <tbody>
       <% @users.each do |user| %>
         <tr class="border-b">
-          <td class="px-4 py-2"><%= user.email_address %></td>
+          <td class="px-4 py-2"><%= user.email %></td>
           <td class="px-4 py-2"><%= user.role %></td>
           <td class="px-4 py-2"><%= number_to_currency(user.balance, unit: "TL", format: "%n%u", separator: ",", delimiter: ".") %></td>
           <% if Current.user.admin? %>

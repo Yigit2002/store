@@ -11,7 +11,7 @@ class UsersController < ApplicationController
     new_balance = params[:balance].to_d
 
     if new_balance >= 0 && @user.update(balance: new_balance)
-      redirect_to users_path, notice: "#{@user.email_address} kullanıcısının bakiyesi güncellendi: #{number_to_currency(new_balance, unit: 'TL', format: '%n%u', separator: ',', delimiter: '.')}"
+      redirect_to users_path, notice: "#{@user.email} kullanıcısının bakiyesi güncellendi: #{number_to_currency(new_balance, unit: 'TL', format: '%n%u', separator: ',', delimiter: '.')}"
     else
       redirect_to users_path, alert: "Bakiye güncellenemedi. Bakiye sıfırdan küçük olamaz veya başka bir hata oluştu."
     end
@@ -40,8 +40,8 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:email_address, :password, :password_confirmation, :role, 
-                                :first_name,:telefon_numarasi, :last_name, :addresses, 
+    params.require(:user).permit(:email, :password, :password_confirmation, :role, 
+                                :first_name,:gsm, :last_name, :addresses, 
                                 :city, :country, :balance)
   end
   

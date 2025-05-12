@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_28_121119) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_08_072140) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -74,12 +74,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_28_121119) do
 
   create_table "cart_items", force: :cascade do |t|
     t.integer "cart_id", null: false
-    t.integer "product_id", null: false
-    t.integer "quantity", default: 1, null: false
+    t.integer "quantity", default: 1
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "seller_product_id"
     t.index ["cart_id"], name: "index_cart_items_on_cart_id"
-    t.index ["product_id"], name: "index_cart_items_on_product_id"
+    t.index ["seller_product_id"], name: "index_cart_items_on_seller_product_id"
   end
 
   create_table "carts", force: :cascade do |t|
@@ -119,11 +119,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_28_121119) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "inventory_count"
     t.integer "category_id"
-    t.decimal "price"
-    t.integer "seller_ids"
-    t.index ["seller_ids"], name: "index_products_on_seller_ids"
+  end
+
+  create_table "seller_products", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "product_id", null: false
+    t.decimal "price", precision: 10, scale: 2
+    t.integer "stock"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_seller_products_on_product_id"
+    t.index ["user_id"], name: "index_seller_products_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -144,7 +151,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_28_121119) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "email_address", null: false
+    t.string "email", null: false
     t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -152,8 +159,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_28_121119) do
     t.decimal "balance", precision: 10, scale: 2, default: "0.0", null: false
     t.string "first_name"
     t.string "last_name"
-    t.string "telefon_numarasi"
-    t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.string "gsm"
+    t.index ["email"], name: "index_users_on_email", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -161,14 +168,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_28_121119) do
   add_foreign_key "addresses", "users"
   add_foreign_key "cards", "users"
   add_foreign_key "cart_items", "carts"
-  add_foreign_key "cart_items", "products"
+  add_foreign_key "cart_items", "seller_products"
   add_foreign_key "carts", "users"
   add_foreign_key "comments", "products"
   add_foreign_key "comments", "users"
   add_foreign_key "favorites", "products"
   add_foreign_key "favorites", "users"
   add_foreign_key "products", "categories"
-  add_foreign_key "products", "users", column: "seller_ids"
+  add_foreign_key "seller_products", "products"
+  add_foreign_key "seller_products", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "subscribers", "products"
 end
