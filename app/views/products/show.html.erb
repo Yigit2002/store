@@ -4,7 +4,6 @@
 
 <section class="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md">
   <div class="flex flex-wrap">
-    <!-- Sol taraf - Ana içerik -->
     <div class="w-full lg:w-7/12">
       <% if @product.featured_image.attached? %>
         <%= image_tag @product.featured_image, class: "w-64 h-auto mx-auto mb-4 rounded-md shadow" %>
@@ -22,28 +21,33 @@
       <%= form_with(url: "/cart/add_to_cart", method: :post, class: "inline") do |form| %>
         <%= form.hidden_field :product_id, value: @product.id %>
         <p> ‏‎ </p>
+
         <% if @product.sellers.any? %>
-            <div>
-              <%= form.label :seller_id, "Satıcı Seçin", class: "block text-sm font-medium text-gray-700 mb-1" %>
-              <%= form.collection_select :seller_id , @product.seller_products, :user_id, :seller_info, { prompt: "Bir satıcı seçin" }, class: "block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
-            </div>     
-            <div class="text-center font-medium mt-4">
-              <span id="seller-price" class="text-lg text-green-600"></span>
-              <p id="seller-stock" class="text-sm text-gray-500 mt-2"></p>
-            </div>
+          <div>
+            <%= form.label :seller_product_id, "Satıcı Seçin", class: "block text-sm font-medium text-gray-700 mb-1" %>
+            <%= form.collection_select :seller_product_id, @product.seller_products, :id, :seller_info, { prompt: "Bir satıcı seçin" }, class: "block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" %>
+          </div>     
+
+          <div class="text-center font-medium mt-4">
+            <span id="seller-price" class="text-lg text-green-600"></span>
+            <p id="seller-stock" class="text-sm text-gray-500 mt-2"></p>
+          </div>
         <% else %>
           <p class="text-gray-500 italic text-center">Bu ürün için satıcı bulunmamaktadır.</p>
         <% end %>
+
         <div class="quantity-wrapper" style="display: flex; align-items: center; justify-content: center; margin: 10px 0;">
           <button type="button" class="quantity-btn" onclick="decreaseQty(this)" style="width: 30px; height: 30px; background:rgb(243, 241, 241); border: 1px solid #ddd; border-radius: 4px 0 0 4px; font-weight: bold; cursor: pointer;">-</button>
-          <%= form.number_field :quantity,value: 1, min: 1, max: @product.seller_products.sum(:stock), 
+          <%= form.number_field :quantity, value: 1, min: 1, max: @product.seller_products.sum(:stock), 
             class: "quantity-input",
             style: "width: 40px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 0; margin: 0; padding: 0; -webkit-appearance: none; -moz-appearance: textfield;",
             readonly: true %>
           <button type="button" class="quantity-btn" onclick="increaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 0 4px 4px 0; font-weight: bold; cursor: pointer;">+</button>
         </div>
+
         <%= form.submit "Sepete Ekle 🏷️", class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
       <% end %>
+
       
       <% if Current.user.favorite_products.include?(@product) %>
         <p> ‏‎ </p>
@@ -125,23 +129,7 @@
         </div>
       <% end %>
     </div>
-
-    <!-- Sağ taraf - Satıcı seçim bölümü -->
-    <div class="w-full lg:w-4/12 mt-6 lg:mt-0">
-      <div class="sticky top-4">
-        <h3 class="font-bold text-lg mb-3 text-center">Satıcı Seçin</h3>
-        
-        <div class="mt-8 border-t pt-4">
-          <%= form_with(url: "/cart/add_to_cart", method: :post) do |form| %>
-            <%= form.hidden_field :product_id, value: @product.id %>
-            <%= form.hidden_field :quantity, value: 1 %>
-            <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
-
 <script>
   // Satıcı seçildiğinde fiyat ve stok bilgisini güncelleyen JavaScript
   document.addEventListener('DOMContentLoaded', function() {

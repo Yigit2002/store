@@ -15,21 +15,18 @@
         <% end %>
         <p class="text-gray-600 mb-4">Stok: <%= product.seller_products.first&.stock || 0 %></p>
         <p class="text-gray-600 mb-4">Fiyat: <%= product.seller_products.minimum(:price).present? ? number_to_currency(product.seller_products.minimum(:price), unit: " ₺", format: "%n%u", separator: ",") : "" %></p>
-
       <% end %>
-      
+      <% lowest_price_seller_product = product.seller_products.order(price: :asc).first %>
       <%= form_with(url: "/cart/add_to_cart", method: :post, data: { turbo: true }) do |form| %>
-        <%= form.hidden_field :product_id, value: product.id %>
-        <%= form.hidden_field :seller_product_id, value: product.seller_products.order(price: :asc).limit(1).pluck(:id).first%>
-
+        <%= form.hidden_field :product_id, value: lowest_price_seller_product&.id %>
+        <%= form.hidden_field :seller_product_id, value: lowest_price_seller_product&.id %>
         <div class="quantity-wrapper" style="display: flex; align-items: center; justify-content: center; margin: 10px 0;">
           <button type="button" class="quantity-btn" onclick="decreaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 4px 0 0 4px; font-weight: bold; cursor: pointer;">-</button>
-          <%= form.number_field :quantity,value: 1, min: 1, max: product.seller_products.sum(:stock), class: "quantity-input", style: "width: 40px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 0; margin: 0; padding: 0; -webkit-appearance: none; -moz-appearance: textfield;",readonly: true %>
+          <%= form.number_field :quantity, value: 1, min: 1, max: lowest_price_seller_product&.stock || 1, class: "quantity-input", style: "width: 40px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 0; margin: 0; padding: 0; -webkit-appearance: none; -moz-appearance: textfield;",readonly: true %>          
           <button type="button" class="quantity-btn" onclick="increaseQty(this)" style="width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 0 4px 4px 0; font-weight: bold; cursor: pointer;">+</button>
         </div>
-        <p> ‏‎ </p>
-        <%= form.submit "Sepete Ekle 🏷️", class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
-      <% end %>
+        <%= form.submit "Sepete Ekle 🛍️", class: "bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors" %>
+    <% end %>
     </div>
   <% end %>
 </div>
