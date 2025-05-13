@@ -51,7 +51,7 @@
       <%= button_to "Çıkış Yap 🔒", session_path, class: "text-lg text-red-600 hover:text-red-800 font-medium transition-colors", method: :delete %>
       <span class="text-gray-600">Hoşgeldiniz <%= Current.user.first_name%> <%=Current.user.last_name%></span>
       </div>
-    <% end %>
+    <% end %>     
   </nav>
   
   <div id="messages" class="w-1/2 mx-auto z-50 mt-16">
@@ -74,7 +74,7 @@
             </li>
           <% end %>
         </ul>
-      </aside>
+      </aside> 
     <% end %>
 
     <main class="flex-1 p-6">

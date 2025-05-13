@@ -60,7 +60,7 @@ class ProductsController < ApplicationController
   def my_products
     @products = Current.user.seller_products.includes(:product).map(&:product)
   end
-  
+   
   def select_seller
     @product = Product.find(params[:id])
     seller_product = @product.seller_products.find_by(user_id: params[:seller_id])
@@ -104,7 +104,7 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(:name, :description, :featured_image, :inventory_count, :category_id, :price)
+    params.require(:product).permit(:name, :description, :featured_image, :category_id,)
   end
 
 
