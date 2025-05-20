@@ -7,11 +7,12 @@ class Product < ApplicationRecord
 
   has_many :comments, dependent: :destroy
   has_many :users, through: :comments
+  has_many :users, through: :seller_products
 
-  has_many :cart_items
+  has_many :cart_items  
   has_many :carts, through: :cart_items
   
-  has_many :seller_products
+  has_many :seller_products, dependent: :destroy
   has_many :sellers, through: :seller_products, source: :user
 
   has_one_attached :featured_image  
@@ -26,7 +27,7 @@ class Product < ApplicationRecord
   after_update_commit :notify_subscribers, if: :back_in_stock?
 
   def back_in_stock?
-    inventory_count_previously_was.zero? && inventory_count > 0
+    stock_previously_was.zero? && stock > 0
   end
 
   def notify_subscribers

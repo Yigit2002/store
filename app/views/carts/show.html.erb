@@ -17,10 +17,11 @@
               <p class="text-gray-600">Toplam: <%= number_to_currency(item.seller_product&.price.to_f * item.quantity.to_f, unit: "₺", format: "%n %u") %></p>
             </div>
             <div class="flex items-center">
-              <%= button_to "-", update_quantity_cart_path(item, quantity: item.quantity - 1), method: :patch, class: "quantity-btn" %>
-              <span class="mx-2"><%= item.quantity %></span>
-              <%= button_to "+", update_quantity_cart_path(item, quantity: item.quantity + 1), method: :patch, class: "quantity-btn" %>
-              <%= button_to "Kaldır", remove_from_cart_path(item), method: :delete, class: "bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 ml-4" %>
+              <%= button_to "-", update_quantity_cart_path(item, quantity: item.quantity - 1), method: :patch, class: "quantity-btn", style: "width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 4px 0 0 4px; font-weight: bold; cursor: pointer;" %>            
+              <span class="mx-4"><%= item.quantity %></span>
+              <%= button_to "+", update_quantity_cart_path(item, quantity: item.quantity + 1), method: :patch, class: "quantity-btn", style: "width: 30px; height: 30px; background: #f1f1f1; border: 1px solid #ddd; border-radius: 4px 0 0 4px; font-weight: bold; cursor: pointer;" %>
+              <span class = "mx-4">              
+              <%= button_to "Kaldır", remove_from_cart_path(item), method: :delete, class: "bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 ml-8" %>
             </div>
           </div>
         <% end %>

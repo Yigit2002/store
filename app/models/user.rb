@@ -10,7 +10,7 @@ class User < ApplicationRecord
   has_many :favorite_products, through: :favorites, source: :product
   has_many :products, foreign_key: :seller_ids, dependent: :destroy
 
-  has_many :seller_products
+  has_many :seller_products, foreign_key: :user_id
   has_many :products, through: :seller_products
 
   validates :first_name, :last_name, length: { maximum: 50 }, allow_blank: true

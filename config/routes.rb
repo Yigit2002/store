@@ -16,7 +16,12 @@ Rails.application.routes.draw do
   # root to: 'home#index'
   resource :session
   resources :favorites, only: [:index, :create, :destroy]
-
+  resources :seller_products, only: [:index, :show, :edit, :update, :destroy] do
+    collection do
+      get :my_products, action: :index
+    end
+  end
+  
   resource :cart, only: [:show] do
     post :add_to_cart, as: :add_to_cart
     post :checkout, to: "carts#checkout"
@@ -47,10 +52,8 @@ Rails.application.routes.draw do
 
   get "admin/cards", to: "cards#admin_index", as: :admin_cards
 
-  resources :products, only: [:index, :new, :create, :show] do
-    collection do
-      get 'my_products'
-    end
+  resources :products, only: [:index, :new, :create, :show, :destroy] do
+
   end
 
   resources :products do

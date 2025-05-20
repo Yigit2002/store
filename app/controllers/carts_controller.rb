@@ -22,7 +22,7 @@ class CartsController < ApplicationController
   end
 
   def add_to_cart
-    product = Product.find(params[:product_id])
+    # product = Product.find(params[:product_id])
     seller_product = SellerProduct.find(params[:seller_product_id])
     cart_item = @cart.cart_items.find_by(seller_product_id: seller_product.id)
     if cart_item

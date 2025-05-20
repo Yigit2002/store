@@ -40,24 +40,53 @@
         </div>
         
 
-      <h2 class="text-xl font-medium mb-4 mt-6">Şifre Değiştirme</h2>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="mb-4">
-          <%= form.label :password, "Yeni Şifre", class: "block mb-1" %>
-          <%= form.password_field :password, class: "w-full p-2 border rounded" %>
-        </div>
-        
-        <div class="mb-4">
-          <%= form.label :password_confirmation, "Yeni Şifre (Tekrar)", class: "block mb-1" %>
-          <%= form.password_field :password_confirmation, class: "w-full p-2 border rounded" %>
+      <h2 class="text-lg font-medium mb-4 mt-6">Şifre Değiştirme</h2>
+
+          <div class="mb-4">
+            <%= form.check_box :change_password, id: "change_password", class: "mr-2" %>
+            <%= form.label :change_password, "Şifreyi Değiştirmek İstiyorum", class: "text-gray-700" %>
+          </div>
+
+          <div class="mb-4">
+            <%= form.label :password, "Yeni Şifre", class: "block mb-1", id: "password_label" %>
+            <%= form.password_field :password, class: "w-full p-2 border rounded", disabled: true, id: "password_field" %>
+          </div>
+
+          <div class="mb-4">
+            <%= form.label :password_confirmation, "Yeni Şifre (Tekrar)", class: "block mb-1", id: "password_confirmation_label" %>
+            <%= form.password_field :password_confirmation, class: "w-full p-2 border rounded", disabled: true, id: "password_confirmation_field" %>
+          </div>
         </div>
       </div>
-      
+      <br>
+       
       <div class="mt-6">
         <%= form.submit "Profili Güncelle", class: "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors" %>
-        <%= link_to "İptal", profile_path, class: "ml-2 text-gray-600 hover:text-gray-800" %>
-      </div>
+        <%= link_to "İptal", profile_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors" %>
+      </div>  
     </div>
-  <% end %>
-</div>
+  <% end %> 
+</div> 
+
+<script>
+  document.getElementById('change_password').addEventListener('change', function() {
+    const passwordField = document.getElementById('password_field');
+    const passwordConfirmationField = document.getElementById('password_confirmation_field');
+    const passwordLabel = document.getElementById('password_label');
+    const passwordConfirmationLabel = document.getElementById('password_confirmation_label');
+
+    if (this.checked) {
+      passwordField.disabled = false;
+      passwordConfirmationField.disabled = false;
+      passwordLabel.classList.remove('text-gray-600');
+      passwordConfirmationLabel.classList.remove('text-gray-600');
+    } else {
+      passwordField.disabled = true;
+      passwordConfirmationField.disabled = true;
+      passwordField.value = '';
+      passwordConfirmationField.value = '';
+      passwordLabel.classList.add('text-gray-600');
+      passwordConfirmationLabel.classList.add('text-gray-600');
+    }
+  });
+</script>
