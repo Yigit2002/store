@@ -1,4 +1,5 @@
 class CategoriesController < ApplicationController
+  before_action :ensure_admin, only: [:index, :new]
 
   def index
     @categories = Category.all

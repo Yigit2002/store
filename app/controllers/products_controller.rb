@@ -1,8 +1,7 @@
 class ProductsController < ApplicationController
-  before_action :ensure_seller, only: [:new, :create, :edit, :update, :destroy]
+  before_action :ensure_seller, only: [:new,:create, :edit, :update, :destroy, :my_products]
   before_action :set_product, only: [:edit, :update, :destroy]
   before_action :ensure_product_owner, only: [:edit, :update, :destroy]
-  before_action :ensure_seller, only: [:my_products]
 
   def index
     @products = Product.includes(:seller_products).all
@@ -22,7 +21,7 @@ class ProductsController < ApplicationController
     @product = Product.new
     @categories = Category.all
   end
-
+  
   def create
     @product = Product.new(product_params)
     if @product.save
@@ -54,13 +53,13 @@ class ProductsController < ApplicationController
   def destroy
     @product = Product.find(params[:id])
     @product.destroy
-    redirect_to root_path
+    redirect_to root_path, notice: "Ürüm başarıyla kaldırıldı"
   end
 
   def my_products
-    @products = Current.user.seller_products.includes(:product).map(&:product)
+    @seller_product = Current.user.seller_products.includes(:product).map(&:product)
   end
-   
+  
   def select_seller
     @product = Product.find(params[:id])
     seller_product = @product.seller_products.find_by(user_id: params[:seller_id])
@@ -75,7 +74,7 @@ class ProductsController < ApplicationController
         cart_item = cart.cart_items.find_or_initialize_by(seller_product_id: seller_product.id)
         cart_item.quantity ||= 0
         cart_item.quantity += 1
-  
+   
         # Stok kontrolü
         if selected_inventory >= cart_item.quantity
           if cart_item.save
@@ -104,18 +103,14 @@ class ProductsController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(:name, :description, :featured_image, :category_id,)
+    params.require(:product).permit(:name, :description, :featured_image, :category_id)
   end
 
 
   def ensure_seller
-    unless Current.user.seller?
-      redirect_to root_path, alert: "Bu işlem için satıcı olmanız gerekiyor."
+    unless Current.user&.seller?
+      redirect_to root_path, alert: "Bu işlem için yetkiniz yok."
     end
   end
 
-  def ensure_product_owner
-    @product = Product.find(params[:id])
-    redirect_to root_path, alert: "Bu ürünü düzenleme yetkiniz yok." unless Current.user&.admin? || @product.sellers.include?(Current.user)
-  end
 end
