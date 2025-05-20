@@ -1,5 +1,6 @@
 class Card < ApplicationRecord
   belongs_to :user
+  
   validates :name, :number, :security_code, :expiry_date, presence: true
   validates :number, uniqueness: true, length: { is: 16 }
   validates :security_code, length: { is: 3 }

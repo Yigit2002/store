@@ -1,13 +1,12 @@
 class Product < ApplicationRecord
-  include Product::Notifications
   has_many :subscribers, dependent: :destroy
 
   has_many :favorites, dependent: :destroy
   has_many :favorited_by_users, through: :favorites, source: :user
 
   has_many :comments, dependent: :destroy
-  has_many :users, through: :comments
-  has_many :users, through: :seller_products
+  # has_many :users, through: :comments
+  # has_many :users, through: :seller_products
 
   has_many :cart_items  
   has_many :carts, through: :cart_items
@@ -15,14 +14,13 @@ class Product < ApplicationRecord
   has_many :seller_products, dependent: :destroy
   has_many :sellers, through: :seller_products, source: :user
 
+  belongs_to :category
+
   has_one_attached :featured_image  
   has_rich_text :description
-  belongs_to :category
-  
   
   validates :name, presence: true
   validates :category_id, presence: true
-  # validates :seller_id, presence: true
 
   after_update_commit :notify_subscribers, if: :back_in_stock?
 

@@ -1,6 +1,5 @@
 class CartItem < ApplicationRecord
   belongs_to :cart
-  # belongs_to :product
   belongs_to :seller, class_name: 'User', optional: true
   belongs_to :seller_product
 
