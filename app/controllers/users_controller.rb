@@ -47,7 +47,7 @@ class UsersController < ApplicationController
   
   def profile_params
     params.require(:user).permit(:first_name, :last_name, :addresses, 
-                                :city,:country, :password, :password_confirmation,:telefon_numarasi)
+                                :city,:country, :password, :password_confirmation,:gsm)
   end
 
   def ensure_admin

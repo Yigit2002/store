@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_08_072140) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_26_064519) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -78,7 +78,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_08_072140) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "seller_product_id"
+    t.integer "order_id"
     t.index ["cart_id"], name: "index_cart_items_on_cart_id"
+    t.index ["order_id"], name: "index_cart_items_on_order_id"
     t.index ["seller_product_id"], name: "index_cart_items_on_seller_product_id"
   end
 
@@ -113,6 +115,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_08_072140) do
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_favorites_on_product_id"
     t.index ["user_id"], name: "index_favorites_on_user_id"
+  end
+
+  create_table "order_items", force: :cascade do |t|
+    t.integer "order_id", null: false
+    t.integer "seller_product_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["seller_product_id"], name: "index_order_items_on_seller_product_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -168,12 +188,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_08_072140) do
   add_foreign_key "addresses", "users"
   add_foreign_key "cards", "users"
   add_foreign_key "cart_items", "carts"
+  add_foreign_key "cart_items", "orders"
   add_foreign_key "cart_items", "seller_products"
   add_foreign_key "carts", "users"
   add_foreign_key "comments", "products"
   add_foreign_key "comments", "users"
   add_foreign_key "favorites", "products"
   add_foreign_key "favorites", "users"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "seller_products"
+  add_foreign_key "orders", "users"
   add_foreign_key "products", "categories"
   add_foreign_key "seller_products", "products"
   add_foreign_key "seller_products", "users"

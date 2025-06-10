@@ -10,21 +10,49 @@ Rails.application.routes.draw do
   get "privacy_policy", to: "pages#privacy_policy"
   get 'profile', to: 'users#show_profile', as: 'profile'
   get 'profile/edit', to: 'users#edit_profile', as: 'edit_profile'
+  get "admin/cards", to: "cards#admin_index", as: :admin_cards
   patch 'profile/update', to: 'users#update_profile', as: 'update_profile'
+  patch '/orders/:id/refund', to: 'orders#refund', as: 'refund_order'
 
-  # get 'home/index'
-  # root to: 'home#index'
   resource :session
   resources :favorites, only: [:index, :create, :destroy]
+  resources :orders, only: [:index, :create]
+  resources :seller_orders, only: [:index, :update]
+  resources :seller_products do
+    member do
+      get :update
+      get :destroy
+    end
+  end
+
+    namespace :api do
+    namespace :v1 do
+      resources :products, only: [:index, :show, :create, :update, :destroy]
+      resources :registrations, only: [:create]
+      resources :seller_products, only: [:index, :create, :update, :destroy] do
+        member do
+          get :edit
+        end
+      end
+    end
+  end
+
+
   resources :seller_products, only: [:index, :show, :edit, :update, :destroy] do
     collection do
       get :my_products, action: :index
-    end
+    end 
   end
   
   resource :cart, only: [:show] do
     post :add_to_cart, as: :add_to_cart
     post :checkout, to: "carts#checkout"
+  end
+
+  resources :orders, only: [:index] do
+    member do
+      patch :cancel
+    end
   end
 
   resources :carts, only: [] do
@@ -33,7 +61,6 @@ Rails.application.routes.draw do
       patch :update_quantity
     end
   end
-
 
   delete "cart/remove_from_cart/:id", to: "carts#remove_from_cart", as: :remove_from_cart
 
@@ -50,8 +77,6 @@ Rails.application.routes.draw do
     end
   end
 
-  get "admin/cards", to: "cards#admin_index", as: :admin_cards
-
   resources :products, only: [:index, :new, :create, :show, :destroy] do
 
   end
@@ -65,22 +90,20 @@ Rails.application.routes.draw do
   resources :categories, only: [:index, :new, :create]
   
   delete :clear_cart, to: "carts#clear_cart"
-
   resource :registration, only: %i[new create]
   resource :unsubscribe, only: [ :show ]
   resources :passwords, param: :token
   resources :addresses
   resources :products do
-    resources :comments, only: [:create, :destroy]
-    resources :subscribers, only: [ :create ]
-    resources :products, only: [:index, :new, :create]
+  resources :comments, only: [:create, :destroy]
+  resources :subscribers, only: [ :create ]
+  resources :products, only: [:index, :new, :create]
   end 
   root "products#index"
 
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
-  
 
   delete "session", to: "sessions#destroy"
   # get "/products", to: "products#index"

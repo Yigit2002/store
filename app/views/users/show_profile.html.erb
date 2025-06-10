@@ -26,6 +26,10 @@ end %></p>
         <div class="flex space-x-4">
           <%= link_to "Adreslerim 📍", addresses_path, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors" %>
           <%= link_to "Kartlar 💳", cards_path, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors" %>
+          <%= link_to "Siparişlerim 📦", orders_path, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"%>
+          <% if Current.user.role == "seller" %>
+          <%= link_to "Gelen Siparişler 📋", seller_orders_path, class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"%>
+          <%end%>
         </div>
     
     <div class="mt-6 flex gap-3">

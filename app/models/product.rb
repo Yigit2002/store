@@ -5,8 +5,6 @@ class Product < ApplicationRecord
   has_many :favorited_by_users, through: :favorites, source: :user
 
   has_many :comments, dependent: :destroy
-  # has_many :users, through: :comments
-  # has_many :users, through: :seller_products
 
   has_many :cart_items  
   has_many :carts, through: :cart_items
@@ -22,13 +20,11 @@ class Product < ApplicationRecord
   validates :name, presence: true
   validates :category_id, presence: true
 
-  after_update_commit :notify_subscribers, if: :back_in_stock?
-
   def back_in_stock?
-    stock_previously_was.zero? && stock > 0
+    seller_products.sum(:stock) > 0 && seller_products.all? { |sp| !sp.stock_previously_was.zero? }
   end
 
-  def notify_subscribers
+  def notify_subscribers 
     subscribers.each do |subscriber|
       ProductMailer.with(product: self, subscriber: subscriber).in_stock.deliver_now
     end

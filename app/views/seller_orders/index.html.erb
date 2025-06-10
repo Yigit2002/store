@@ -1,0 +1,41 @@
+<h1>Siparişler</h1>
+
+<% if @order_items.any? %>
+  <table class="min-w-full bg-white border border-gray-200 mt-6 shadow rounded-lg">
+  <thead>
+    <tr class="bg-gray-100 text-left text-gray-600 text-sm uppercase tracking-wider">
+      <th class="px-6 py-3">Ürün</th>
+      <th class="px-6 py-3">Müşteri</th>
+      <th class="px-6 py-3">Kargo Durumu</th>
+      <th class="px-6 py-3">İşlem</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @orders.each do |order| %>
+      <% order_item = order.order_items.first %>
+      <tr class="border-t">
+        <td class="px-6 py-4"><%= order_item.seller_product.product.name %></td>
+        <td class="px-6 py-4"><%= order.user.full_name %></td>
+        <td class="px-6 py-4">
+          <% if order.preparing? %>
+            <span class="text-yellow-600 font-medium">Hazırlanıyor</span>
+          <% elsif order.shipped? %>
+            <span class="text-blue-600 font-medium">Kargoda</span>
+          <% else %>
+            <span class="text-green-600 font-medium">Teslim Edildi</span>
+          <% end %>
+        </td>
+        <td class="px-6 py-4">
+          <%= form_with model: order, url: seller_order_path(order), method: :patch do |form| %>
+            <%= form.select :status, options_for_select([["Hazırlanıyor", "preparing"], ["Kargoda", "shipped"], ["Teslim Edildi", "delivered"]], order.status), {}, class: "border rounded px-2 py-1" %>
+            <%= form.submit "Güncelle", class: "ml-2 bg-blue-500 text-white px-3 py-1 rounded" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% else %>
+  <p class="text-muted mt-4">Henüz sipariş bulunmamaktadır.</p>
+<% end %>

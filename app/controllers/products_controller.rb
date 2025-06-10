@@ -1,7 +1,7 @@
 class ProductsController < ApplicationController
-  before_action :ensure_seller, only: [:new,:create, :edit, :update, :destroy, :my_products]
+    # before_action :ensure_seller, only: [:new,:create, :edit, :update, :destroy, :my_products]
   before_action :set_product, only: [:edit, :update, :destroy]
-  before_action :ensure_product_owner, only: [:edit, :update, :destroy]
+  # before_action :ensure_product_owner, only: [:edit, :update, :destroy]
 
   def index
     @products = Product.includes(:seller_products).all

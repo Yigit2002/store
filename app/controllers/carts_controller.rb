@@ -6,6 +6,7 @@ class CartsController < ApplicationController
   def show
     @cart_items = @cart.cart_items
     @addresses = Current.user.addresses
+    @seller_products = Current.user.cart_items.includes(:seller_product).map(&:seller_product)
   end
 
   def update_quantity
@@ -81,12 +82,26 @@ class CartsController < ApplicationController
           # Stoktan düş
           seller_product.update!(stock: seller_product.stock - item.quantity)
         else
-          return redirect_to cart_path, alert: "#{item.product.name} ürünü için yeterli stok yok!"
+          return redirect_to cart_path, alert: "#{item.seller_product.product.name} ürünü için yeterli stok yok!"
         end
       end
       
       # Bakiye düşme ve sepeti temizleme
+
       Current.user.update!(balance: Current.user.balance - total_price)
+      # Order.create!(user: Current.user)
+      order = Order.create!(user: Current.user)
+
+      @cart.cart_items.each do |item|
+      OrderItem.create!(
+        id: OrderItem.ids,
+        order: order,
+        seller_product: item.seller_product,
+        quantity: item.quantity
+      )
+    end
+
+      
       @cart.cart_items.destroy_all
       
       redirect_to products_path, notice: "Satın alma işlemi başarıyla tamamlandı."

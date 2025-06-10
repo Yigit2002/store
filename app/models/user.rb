@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :favorites, dependent: :destroy
   has_many :favorite_products, through: :favorites, source: :product
   # has_many :products, foreign_key: :seller_ids, dependent: :destroy
+  has_many :orders
 
   has_many :seller_products, foreign_key: :user_id
   has_many :products, through: :seller_products
@@ -19,6 +20,7 @@ class User < ApplicationRecord
   enum :role, { customer: 0, admin: 1, seller: 2 }, default: :customer
 
   has_one :cart, dependent: :destroy
+  has_many :cart_items, through: :cart
 
   normalizes :email, with: -> (e) { e.strip.downcase }
 
