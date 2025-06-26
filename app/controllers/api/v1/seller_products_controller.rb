@@ -4,6 +4,7 @@ class Api::V1::SellerProductsController < ApplicationController
 
   def index
     @seller_products = Current.user.seller_products.includes(:product)
+
     render json: @seller_products, status: :ok
   end
 

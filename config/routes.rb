@@ -25,14 +25,56 @@ Rails.application.routes.draw do
     end
   end
 
-    namespace :api do
+  namespace :api do
     namespace :v1 do
+      resources :comments, only: [:create, :destroy]
+      resources :favorites, only: [:index, :create, :destroy]
+      resources :seller_orders, only: [:index, :update]
+      resources :unsubscribe, only: [:destroy]
+      resources :orders, only: [:index] do
+        member do
+          patch :cancel
+          patch :refund
+        end
+      end
+      resources :order_items, only: [:index], param: :order_id
+      resources :addresses, only: [:index, :show, :create, :update, :destroy]
+      resources :categories, only: [:index, :show, :create, :update, :destroy]
       resources :products, only: [:index, :show, :create, :update, :destroy]
       resources :registrations, only: [:create]
+
       resources :seller_products, only: [:index, :create, :update, :destroy] do
         member do
           get :edit
         end
+      end
+
+      resources :cards, only: [:index, :show, :create, :destroy] do
+        member do
+          patch :update_balance
+        end
+      end
+
+      resources :users, only: [:index] do
+        member do
+          patch :update_balance
+        end
+      end
+      get 'users/show_profile', to: 'users#show_profile'
+      patch 'users/update_profile', to: 'users#update_profile'
+      
+      resource :cart, only: [:show] do
+        member do
+          patch :update_quantity
+          post :add_to_cart
+          delete :remove_from_cart
+          delete :clear_cart
+          post :checkout
+        end
+      end
+
+      resources :products do
+        resources :subscribers, only: [:create]
       end
     end
   end

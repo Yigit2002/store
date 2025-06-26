@@ -18,18 +18,15 @@ class UsersController < ApplicationController
   end
 
   def show_profile
-    @user = current_user
+    @user = Current.user
   end
   
-  # Profil düzenleme sayfası için
   def edit_profile
-    @user = current_user
+    @user = Current.user
   end
   
-  # Profil güncelleme işlemi için
   def update_profile
     @user = Current.user
-    
     if @user.update(profile_params)
       redirect_to profile_path, notice: 'Profiliniz başarıyla güncellendi.'
     else

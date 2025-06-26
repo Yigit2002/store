@@ -1,5 +1,5 @@
 class Api::V1::ProductsController < ApplicationController
-  before_action :set_product, only: [:show, :update, :create, :destroy]
+  before_action :set_product, only: [:show, :update, :destroy]
   
   def index
     @products = Product.all
@@ -42,6 +42,6 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(:name, :description)
+    params.require(:product).permit(:name, :description, :featured_image, :category_id)
   end
 end

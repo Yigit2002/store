@@ -1,16 +1,18 @@
 class ApplicationController < ActionController::Base
-  include Authentication
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  allow_browser versions: :modern
-  before_action :set_categories, if: :authenticated?
+  # include Authentication
+  
+  # allow_browser versions: :modern
+  # before_action :set_categories, if: :authenticated?
 
-  around_action :switch_locale
+  # around_action :switch_locale
 
-  helper_method :current_user
+  # helper_method :current_user
 
   def set_categories
     @categories = Category.all
   end
+
+  skip_before_action :verify_authenticity_token
 
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]
