@@ -1,24 +1,17 @@
 class Api::V1::UsersController < ApplicationController
   include ActionView::Helpers::NumberHelper
+  before_action :authenticate_request, only: [:me]
 
   def index
     users = User.all
     render json: users, status: :ok
   end
 
-  def update_balance
-    user = User.find(params[:id])
-    new_balance = params[:balance].to_d
-
-    if new_balance >= 0 && user.update(balance: new_balance)
-      render json: {
-        message: "#{user.email} kullanıcısının bakiyesi güncellendi: #{number_to_currency(new_balance, unit: 'TL', format: '%n%u', separator: ',', delimiter: '.')}",
-        user: user
-      }, status: :ok
+  def me
+    if @current_user
+      render json: { user: @current_user }, status: :ok
     else
-      render json: {
-        error: "Bakiye güncellenemedi. Bakiye sıfırdan küçük olamaz veya başka bir hata oluştu."
-      }, status: :unprocessable_entity
+      render json: { error: "Invalid token" }, status: :unauthorized
     end
   end
 
@@ -38,15 +31,19 @@ class Api::V1::UsersController < ApplicationController
 
   private
 
+  def authenticate_request
+    @current_user = current_user
+  end
+
   def user_params
     params.require(:user).permit(:email, :password, :password_confirmation, :role,
                                 :first_name, :last_name, :gsm,
-                                :addresses, :city, :country, :balance)
+                                :country)
   end
 
   def profile_params
     params.require(:user).permit(:first_name, :last_name, :gsm,
-                                :addresses, :city, :country, :password, :password_confirmation)
+                                :password, :password_confirmation)
   end
 
   def ensure_admin

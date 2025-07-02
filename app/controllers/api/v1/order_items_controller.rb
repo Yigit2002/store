@@ -14,7 +14,8 @@ class Api::V1::OrderItemsController < ApplicationController
   end
 
   def set_order
-    @order = Current.user.orders.find_by(id: params[:order_id])
+    user = User.second
+    @order = user.orders.find_by(id: params[:order_id])
     render json: { error: "Sipariş bulunamadı." }, status: :not_found unless @order
   end
 end

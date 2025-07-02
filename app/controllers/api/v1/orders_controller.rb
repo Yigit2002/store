@@ -1,14 +1,13 @@
 class Api::V1::OrdersController < ApplicationController
-  before_action :ensure_current_user
+  # before_action :ensure_current_user
   before_action :set_order, only: [:cancel, :refund]
 
   def index
-    order_ids = Current.user.orders.pluck(:id)
-    @order_items = OrderItem.where(order_id: order_ids).group_by(&:order_id)
-    render json: { orders: Current.user.orders, order_items: @order_items }, status: :ok
+    user = User.second
+    order_ids = user.orders.pluck(:id)
+    render json: { orders: user.orders }, status: :ok
 
-    orders = Current.user.orders
-    render json: { orders: orders }
+    # orders = user.orders
   end
 
   def order_items
@@ -44,7 +43,8 @@ class Api::V1::OrdersController < ApplicationController
   end
  
   def set_order
-    @order = Current.user.orders.find_by(id: params[:id])
+    user = User.second
+    @order = user.orders.find_by(id: params[:id])
     render json: { error: "Sipariş bulunamadı." }, status: :not_found unless @order
   end
 end

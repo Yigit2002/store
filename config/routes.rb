@@ -27,6 +27,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      resources :auth, only: [:create]
       resources :comments, only: [:create, :destroy]
       resources :favorites, only: [:index, :create, :destroy]
       resources :seller_orders, only: [:index, :update]
@@ -52,6 +53,12 @@ Rails.application.routes.draw do
       resources :cards, only: [:index, :show, :create, :destroy] do
         member do
           patch :update_balance
+        end
+      end
+
+      resources :users do
+        collection do
+          get :me
         end
       end
 

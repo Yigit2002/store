@@ -19,7 +19,7 @@
   when "seller" then "Satıcı"
   else "Müşteri"
 end %></p>
-        <p class="mb-2"><strong>Bakiye:</strong> <%= number_to_currency(Current.user.balance, unit: "₺") %></p>
+        <p class="mb-2"><strong>Bakiye:</strong> <%= number_to_currency(Current.user.cards.first&.balance, unit: "₺") %></p>
         <p class="mb-2"><strong>Telefon Nuraması:</strong> <%= Current.user.gsm%></p>
       </div>
       

@@ -2,7 +2,7 @@ class Api::V1::SellerOrdersController < ApplicationController
   before_action :set_order, only: [:update]
 
   def index
-    user = User.last
+    user = User.second
     @orders = Order.joins(:order_items => :seller_product)
                   .where(seller_products: { user_id:   user.id })
                   .distinct

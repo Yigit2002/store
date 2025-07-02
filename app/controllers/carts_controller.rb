@@ -73,7 +73,7 @@ class CartsController < ApplicationController
     @address = Current.user.addresses.find_by(id: params[:address_id])
     
     # Bakiye kontrolü
-    if Current.user.balance >= total_price
+    if Current.user.cards.first&.balance >= total_price
       # Stok ve satın alma işlemleri
       @cart.cart_items.each do |item|
         seller_product = item.seller_product
@@ -88,7 +88,7 @@ class CartsController < ApplicationController
       
       # Bakiye düşme ve sepeti temizleme
 
-      Current.user.update!(balance: Current.user.balance - total_price)
+      Current.user.cards.first&.update!(balance: Current.user.cards.first.balance - total_price)
       # Order.create!(user: Current.user)
       order = Order.create!(user: Current.user)
 

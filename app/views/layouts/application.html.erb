@@ -46,7 +46,7 @@
           <%= link_to "Yeni Ürün Ekle 🆕", new_product_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>
           <%= link_to "Ürünlerim 📝",   my_products_seller_products_path, class: "text-lg text-blue-600 hover:text-blue-800 font-medium transition-colors" %>        <% end %>
       <%end%>
-      <span class="text-lg text-gray-600">Bakiyeniz <%=Current.user.balance%>₺ 💸</span>
+      <span class="text-lg text-gray-600">Bakiyeniz <%=Current.user.cards.first&.balance%>₺ 💸</span>
       <%= button_to "Çıkış Yap 🔒", session_path, class: "text-lg text-red-600 hover:text-red-800 font-medium transition-colors", method: :delete %>
       <span class="text-gray-600">Hoşgeldiniz <%= Current.user.first_name%> <%=Current.user.last_name%></span>
       </div>
@@ -83,7 +83,7 @@
   </div>
 
   <footer class="bg-gray-800 text-white text-center py-4 w-full">
-    <p>© 2025 HERO SHOP. Tüm Hakları Saklıdır.</p>
+    <p>© 2025 NexTrend. Tüm Hakları Saklıdır.</p>
     <div class="space-x-4">
       <%= link_to "Hakkımızda", about_path, class: "text-gray-400 hover:text-white" %>
       <%= link_to "İletişim", contact_path, class: "text-gray-400 hover:text-white" %>

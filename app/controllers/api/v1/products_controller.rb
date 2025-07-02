@@ -30,7 +30,7 @@ class Api::V1::ProductsController < ApplicationController
 
   def destroy
     @product.destroy 
-    head :no_content
+    render json: { message: "Ürün silindi." }, status: :ok
   end
 
   private

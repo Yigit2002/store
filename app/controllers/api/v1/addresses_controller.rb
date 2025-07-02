@@ -30,7 +30,7 @@ class Api::V1::AddressesController < ApplicationController
 
   def destroy
     @address.destroy
-    head :no_content
+    render json: { message: "Adres silindi." }, status: :ok
   end
 
   private
