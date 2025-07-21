@@ -3,7 +3,7 @@ class Api::V1::CardsController < Api::V1::ApiController
   before_action :ensure_admin, only: [:update_balance]
 
   def index
-    @cards = user.cards
+    @cards = @current_user.cards
     render json: @cards, status: :ok
   end
 
@@ -12,7 +12,7 @@ class Api::V1::CardsController < Api::V1::ApiController
   end
 
   def create
-    @card = user.cards.build(card_params)
+    @card = @current_user.cards.build(card_params)
     if @card.save
       render json: { message: "Kart başarıyla eklendi.", card: @card }, status: :created
     else

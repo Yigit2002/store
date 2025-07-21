@@ -36,7 +36,7 @@ class Api::V1::AddressesController < Api::V1::ApiController
   private
 
   def set_address
-    @address = User.last.addresses.find(params[:id])
+    @address = @current_user.addresses.find(params[:id])
   end
 
   def address_params

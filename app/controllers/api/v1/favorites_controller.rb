@@ -2,8 +2,7 @@ class Api::V1::FavoritesController < Api::V1::ApiController
   before_action :set_product, only: [:create, :destroy]
 
   def index
-    user = User.second
-    @products = user.favorite_products
+    @products = @current_user.favorite_products
     render json: @products, status: :ok
   end
 

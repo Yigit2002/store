@@ -20,10 +20,10 @@ class Api::V1::UsersController < Api::V1::ApiController
   end
 
   def update_profile
-    if user.update(profile_params)
-      render json: user, status: :ok
+    if @current_user.update(profile_params)
+      render json: @current_user, status: :ok
     else
-      render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @current_user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
