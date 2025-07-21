@@ -1,9 +1,8 @@
-class Api::V1::CardsController < ApplicationController
+class Api::V1::CardsController < Api::V1::ApiController
   before_action :set_card, only: [:show, :update_balance, :destroy]
   before_action :ensure_admin, only: [:update_balance]
 
   def index
-    user = User.second
     @cards = user.cards
     render json: @cards, status: :ok
   end
@@ -13,7 +12,6 @@ class Api::V1::CardsController < ApplicationController
   end
 
   def create
-    user = User.second
     @card = user.cards.build(card_params)
     if @card.save
       render json: { message: "Kart başarıyla eklendi.", card: @card }, status: :created
@@ -43,10 +41,10 @@ class Api::V1::CardsController < ApplicationController
   end
 
   def card_params
-    params.require(:card).permit(:name, :number, :security_code, :expiry_date, Current.user&.admin? ? :balance : nil).compact
+    params.require(:card).permit(:name, :number, :security_code, :expiry_date, @current_user&.admin? ? :balance : nil).compact
   end
 
   def ensure_admin
-    render json: { error: "Bu işlem için yetkiniz yok." }, status: :unauthorized unless Current.user&.admin?
+    render json: { error: "Bu işlem için yetkiniz yok." }, status: :unauthorized unless @current_user&.admin?
   end
 end

@@ -1,6 +1,6 @@
-class Api::V1::UsersController < ApplicationController
+class Api::V1::UsersController < Api::V1::ApiController
   include ActionView::Helpers::NumberHelper
-  before_action :authenticate_request, only: [:me]
+  # before_action :authenticate_request, only: [:me]
 
   def index
     users = User.all
@@ -15,13 +15,11 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
-  def show_profile
-    user = User.second
-    render json: user, status: :ok
+  def show
+    render json: @current_user, status: :ok
   end
 
   def update_profile
-    user = Current.user
     if user.update(profile_params)
       render json: user, status: :ok
     else
@@ -30,10 +28,6 @@ class Api::V1::UsersController < ApplicationController
   end
 
   private
-
-  def authenticate_request
-    @current_user = current_user
-  end
 
   def user_params
     params.require(:user).permit(:email, :password, :password_confirmation, :role,
@@ -47,7 +41,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def ensure_admin
-    unless Current.user&.admin?
+    unless @current_user&.admin?
       render json: { error: "Bu işlem için admin yetkisi gerekli." }, status: :forbidden
     end
   end

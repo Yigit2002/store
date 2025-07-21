@@ -1,4 +1,4 @@
-class Api::V1::AddressesController < ApplicationController
+class Api::V1::AddressesController < Api::V1::ApiController
   before_action :set_address, only: [:show, :update, :destroy]
 
   def index

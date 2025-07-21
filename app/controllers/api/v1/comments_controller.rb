@@ -1,12 +1,11 @@
-class Api::V1::CommentsController < ApplicationController
+class Api::V1::CommentsController < Api::V1::ApiController
   before_action :set_product, only: [:create, :destroy]
   before_action :set_comment, only: [:destroy]
   before_action :authorize_user, only: [:destroy]
 
   def create
     @comment = @product.comments.new(comment_params)
-    user1 = User.last
-    @comment.user = user1
+    @comment.user = @current_user
     if @comment.save
       render json: { message: "Yorumunuz başarıyla eklendi!", comment: @comment }, status: :created
     else
@@ -23,14 +22,10 @@ class Api::V1::CommentsController < ApplicationController
 
   def set_product
     @product = Product.find(params[:product_id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Ürün bulunamadı." }, status: :not_found
   end
 
   def set_comment
     @comment = @product.comments.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Yorum bulunamadı." }, status: :not_found
   end
 
   def comment_params
@@ -38,7 +33,7 @@ class Api::V1::CommentsController < ApplicationController
   end
 
   def authorize_user
-    unless Current.user&.admin? || Current.user == @comment.user
+    unless @current_user&.admin? || @current_user == @comment.user
       render json: { error: "Bu yorumu silme yetkiniz yok." }, status: :forbidden
     end
   end

@@ -1,4 +1,4 @@
-class Api::V1::FavoritesController < ApplicationController
+class Api::V1::FavoritesController < Api::V1::ApiController
   before_action :set_product, only: [:create, :destroy]
 
   def index
@@ -8,7 +8,7 @@ class Api::V1::FavoritesController < ApplicationController
   end
 
   def create
-    @favorite = Current.user.favorites.build(product_id: params[:product_id])
+    @favorite = @current_user.favorites.build(product_id: params[:product_id])
     if @favorite.save
       render json: { message: "Ürün favorilere eklendi.", favorite: @favorite }, status: :created
     else
@@ -17,7 +17,7 @@ class Api::V1::FavoritesController < ApplicationController
   end
 
   def destroy
-    @favorite = Current.user.favorites.find(params[:id])
+    @favorite = @current_user.favorites.find(params[:id])
     @favorite.destroy
     render json: { message: "Ürün favorilerden çıkarıldı." }, status: :ok
   end
@@ -26,7 +26,5 @@ class Api::V1::FavoritesController < ApplicationController
 
   def set_product
     @product = Product.find(params[:product_id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Ürün bulunamadı." }, status: :not_found
   end
 end

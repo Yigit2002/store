@@ -1,13 +1,11 @@
-class Api::V1::OrdersController < ApplicationController
+class Api::V1::OrdersController < Api::V1::ApiController
   # before_action :ensure_current_user
   before_action :set_order, only: [:cancel, :refund]
 
   def index
-    user = User.second
-    order_ids = user.orders.pluck(:id)
-    render json: { orders: user.orders }, status: :ok
-
-    # orders = user.orders
+    order_ids = @current_user.orders.pluck(:id)
+    render json: { orders: @current_user.orders }, status: :ok
+    orders = @current_user.orders
   end
 
   def order_items
@@ -37,14 +35,13 @@ class Api::V1::OrdersController < ApplicationController
   private
 
   def ensure_current_user
-    unless Current.user
+    unless @current_user
       render json: { error: "Yetkisiz erişim." }, status: :unauthorized
     end 
   end
  
   def set_order
-    user = User.second
-    @order = user.orders.find_by(id: params[:id])
+    @order = @current_user.orders.find_by(id: params[:id])
     render json: { error: "Sipariş bulunamadı." }, status: :not_found unless @order
   end
 end

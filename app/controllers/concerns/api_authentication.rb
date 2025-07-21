@@ -19,7 +19,7 @@ module ApiAuthentication
           id: payload.id, 
           email: payload.email
         }, 
-        exp: now + 3.minutes.to_i,
+        exp: now + 600000.minutes.to_i,
         iat: now,
         iss: "rails_jwt_api",
         aud: "rails_jwt_client",
@@ -54,7 +54,7 @@ private
   def authenticate
     begin
       if current_user
-        current_user
+        @current_user = User.find(current_user[:id])
       else
         render json: { error: "Unauthorized" }, status: :unauthorized
       end

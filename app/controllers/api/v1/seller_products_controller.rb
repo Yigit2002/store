@@ -1,15 +1,15 @@
-class Api::V1::SellerProductsController < ApplicationController
+class Api::V1::SellerProductsController < Api::V1::ApiController
   before_action :set_seller_product, only: [:edit, :update, :destroy]
   before_action :ensure_seller, only: [:index, :create, :edit, :update, :destroy]
 
   def index
-    @seller_products = Current.user.seller_products.includes(:product)
+    @seller_products = @current_user.seller_products.build(seller_product_params)includes(:product)
 
     render json: @seller_products, status: :ok
   end
 
   def create
-    @seller_product = Current.user.seller_products.build(seller_product_params)
+    @seller_product = @current_user.seller_products.build(seller_product_params)
 
     if @seller_product.save
       render json: { message: "Ürün başarıyla oluşturuldu!", seller_product: @seller_product }, status: :created
@@ -38,9 +38,7 @@ class Api::V1::SellerProductsController < ApplicationController
   private
 
   def set_seller_product
-    @seller_product = Current.user.seller_products.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Bu ürüne erişim yetkiniz yok." }, status: :forbidden
+    @seller_product = @current_user.seller_products.find(params[:id])
   end
 
   def seller_product_params
@@ -48,6 +46,6 @@ class Api::V1::SellerProductsController < ApplicationController
   end
 
   def ensure_seller
-    render json: { error: "Satıcı değilsiniz!" }, status: :forbidden unless Current.user&.seller?
+    render json: { error: "Satıcı değilsiniz!" }, status: :forbidden unless @current_user.seller_products.build(seller_product_params)&.seller?
   end
 end

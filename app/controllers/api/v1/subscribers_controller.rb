@@ -1,4 +1,4 @@
-class Api::V1::SubscribersController < ApplicationController
+class Api::V1::SubscribersController < Api::V1::ApiController
   before_action :set_product, only: [:create]
 
   def create
@@ -10,8 +10,6 @@ class Api::V1::SubscribersController < ApplicationController
 
   def set_product
     @product = Product.find(params[:product_id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Ürün bulunamadı." }, status: :not_found
   end
 
   def subscriber_params

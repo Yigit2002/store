@@ -1,4 +1,4 @@
-class Api::V1::OrderItemsController < ApplicationController
+class Api::V1::OrderItemsController < Api::V1::ApiController
   before_action :ensure_current_user
   before_action :set_order
 
@@ -10,12 +10,11 @@ class Api::V1::OrderItemsController < ApplicationController
   private
 
   def ensure_current_user
-    render json: { error: "Yetkisiz erişim." }, status: :unauthorized unless Current.user
+    render json: { error: "Yetkisiz erişim." }, status: :unauthorized unless @current_user
   end
 
   def set_order
-    user = User.second
-    @order = user.orders.find_by(id: params[:order_id])
+    @order = @current_user.orders.find_by(id: params[:order_id])
     render json: { error: "Sipariş bulunamadı." }, status: :not_found unless @order
   end
 end

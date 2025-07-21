@@ -1,12 +1,12 @@
 class ApplicationController < ActionController::Base
-  # include Authentication
+  include Authentication
   
-  # allow_browser versions: :modern
-  # before_action :set_categories, if: :authenticated?
+  allow_browser versions: :modern
+  before_action :set_categories, if: :authenticated?
 
-  # around_action :switch_locale
+  around_action :switch_locale
 
-  # helper_method :current_user
+  helper_method :current_user
 
   def set_categories
     @categories = Category.all

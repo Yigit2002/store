@@ -1,11 +1,9 @@
-class Api::UnsubscribeController < ApplicationController
+class Api::V1::UnsubscribeController < Api::V1::ApiController
   before_action :set_subscriber, only: [:destroy]
 
   def destroy
     @subscriber.destroy
     render json: { message: "Abonelikten çıkıldı." }, status: :ok
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Abonelik bulunamadı." }, status: :not_found
   end
 
   private

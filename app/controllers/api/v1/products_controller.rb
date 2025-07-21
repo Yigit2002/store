@@ -1,4 +1,4 @@
-class Api::V1::ProductsController < ApplicationController
+class Api::V1::ProductsController < Api::V1::ApiController
   before_action :set_product, only: [:show, :update, :destroy]
   
   def index
@@ -37,8 +37,6 @@ class Api::V1::ProductsController < ApplicationController
 
   def set_product
     @product = Product.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Ürün Bulunamadı' }, status: :not_found
   end
 
   def product_params

@@ -1,10 +1,9 @@
-class Api::V1::SellerOrdersController < ApplicationController
+class Api::V1::SellerOrdersController < Api::V1::ApiController
   before_action :set_order, only: [:update]
 
   def index
-    user = User.second
     @orders = Order.joins(:order_items => :seller_product)
-                  .where(seller_products: { user_id:   user.id })
+                  .where(seller_products: { user_id:   @current_user.id })
                   .distinct
                   .includes(order_items: { seller_product: :product }, user: {})
     render json: @orders, status: :ok
@@ -22,8 +21,6 @@ class Api::V1::SellerOrdersController < ApplicationController
 
   def set_order
     @order = Order.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Sipariş bulunamadı." }, status: :not_found
   end
 
   def order_params

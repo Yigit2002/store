@@ -1,5 +1,5 @@
-class Api::V1::CategoriesController < ApplicationController
-  before_action :ensure_admin, only: [:index, :new]
+class Api::V1::CategoriesController < Api::V1::ApiController
+  before_action :ensure_admin, only: [:new]
   before_action :set_category, only: [:show, :update, :destroy]
 
   def index
@@ -49,7 +49,7 @@ class Api::V1::CategoriesController < ApplicationController
   end
 
   def ensure_admin
-    unless Current.user&.admin?
+    unless @current_user&.admin?
       render json: { error: "Bu işlem için admin yetkisi gereklidir.", status: :unauthorized }, status: :unauthorized
     end
   end

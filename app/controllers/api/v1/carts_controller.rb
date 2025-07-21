@@ -1,11 +1,10 @@
-class Api::V1::CartsController < ApplicationController
+class Api::V1::CartsController < Api::V1::ApiController
   before_action :set_cart
   include ActionView::Helpers::NumberHelper
 
   def show
-    user = User.second
     cart_items = @cart.cart_items
-    addresses = user.addresses
+    addresses = @current_user.addresses
     seller_products = cart_items.includes(:seller_product).map(&:seller_product)
     render json: {
       cart_items: cart_items.as_json(include: { seller_product: { include: :product } })
@@ -61,15 +60,14 @@ class Api::V1::CartsController < ApplicationController
   end
 
   def checkout
-    user = User.second
     total_price = @cart.cart_items.sum { |item| item.seller_product.price * item.quantity }
-    address = user.addresses.find_by(id: params[:address_id])
+    address = @current_user.addresses.find_by(id: params[:address_id])
 
     unless address
       return render json: { error: "Geçerli bir adres seçilmeli." }, status: :unprocessable_entity
     end
 
-    if user.balance >= total_price
+    if @current_user.balance >= total_price
       @cart.cart_items.each do |item|
         seller_product = item.seller_product
         if seller_product.stock >= item.quantity
@@ -79,8 +77,8 @@ class Api::V1::CartsController < ApplicationController
         end
       end
 
-      Current.user.update!(balance: Current.user.balance - total_price)
-      order = Order.create!(user: Current.user)
+      @current_user.update!(balance: @current_user.balance - total_price)
+      order = Order.create!(user: @current_user)
       @cart.cart_items.each do |item|
         OrderItem.create!(
           order: order,
@@ -99,12 +97,11 @@ class Api::V1::CartsController < ApplicationController
   private
 
   def set_cart
-    user = User.second
-    @cart = user.cart || Current.user.create_cart
+    @cart = @current_user.cart || @current_user.create_cart
   end
 
   def ensure_authenticated
-    unless Current.user
+    unless @current_user
       render json: { error: "Kimlik doğrulama gerekli." }, status: :unauthorized
     end
   end
