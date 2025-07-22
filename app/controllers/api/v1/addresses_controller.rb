@@ -7,8 +7,7 @@ class Api::V1::AddressesController < Api::V1::ApiController
   end
 
   def create
-    # @address = Current.user.addresses.build(address_params) Auth gelince kaldırılacak
-    @address = User.last.addresses.build(address_params)
+    @address = @current_user.addresses.build(address_params)
     if @address.save
       render json: @address, status: :created
     else
