@@ -27,6 +27,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      delete 'unsubscribe', to: 'unsubscribe#destroy'
       resources :auth, only: [:create]
       resources :comments, only: [:create, :destroy]
       resources :favorites, only: [:index, :create, :destroy]
@@ -43,6 +44,8 @@ Rails.application.routes.draw do
       resources :categories, only: [:index, :show, :create, :update, :destroy]
       resources :products, only: [:index, :show, :create, :update, :destroy]
       resources :registrations, only: [:create]
+
+      
 
       resources :seller_products, only: [:index, :create, :update, :destroy] do
         member do

@@ -9,6 +9,6 @@ class Api::V1::UnsubscribeController < Api::V1::ApiController
   private
 
   def set_subscriber
-    @subscriber = Subscriber.find_by_token_for(:unsubscribe, params[:token])
+    @subscriber = Subscriber.find_by(id: params[:id])
   end
 end
