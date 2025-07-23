@@ -1,0 +1,22 @@
+<h1 class="text-3xl font-bold text-gray-800 mb-6">Kategoriler</h1>
+
+<% if @categories.empty? %>
+  <p class="text-gray-600">Henüz kategori eklenmemiş.</p>
+<% else %>
+  <ul class="space-y-4">
+    <% @categories.each do |category| %>
+    <p> ‏‎ </p>
+      <li class="bg-white shadow-md rounded-lg p-4">
+        <p class="text-lg font-semibold text-gray-800"><%= category.name %></p>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<div class="mt-6">
+  <p> ‏‎ </p>
+  <%= link_to "Yeni Kategori Ekle", new_category_path, class: "bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition-colors" %>
+</div>
+<p> ‏‎ </p>
+<p> ‏‎ </p>
+<%= link_to "Ana Sayfaya Dön", root_path, class: "bg-red-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition-colors" %>

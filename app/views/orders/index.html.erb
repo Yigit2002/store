@@ -1,0 +1,163 @@
+<div class="container mt-5">
+  <% if @order_items.any? %>
+    <% grouped_orders = @order_items.group_by(&:order_id) %>
+    
+    <% grouped_orders.each do |order_id, items| %>
+      <% order = items.first.order %>
+      <div class="order-card mb-4">
+        <div class="order-header">
+          <div class="order-id">Sipariş #<%= order_id %></div>
+          <% first_item = items.first %>
+          <% badge_class = case first_item.order.status
+                           when "preparing" then "bg-warning text-dark"
+                           when "shipped" then "bg-info" 
+                           when "delivered" then "bg-success"
+                           else "bg-secondary"
+                           end %>
+          <span class="badge <%= badge_class %> px-1 py-2 rounded-pill">
+            Sipariş Durumu: <%= first_item.order.status_tr %>
+          </span>
+        </div>
+        
+        <div class="order-body">
+          <% items.each_with_index do |order_item, index| %>
+            <div class="product-item <%= 'border-bottom-0' if index == items.length - 1 %>">
+              
+              <div class="product-info">
+                <div class="product-name">
+                  <%= order_item.seller_product.product&.name || "Ürün bulunamadı" %>
+                </div>
+                <div class="product-details">
+                  <span class="quantity-badge">
+                    <%= order_item.quantity %> adet
+                  </span>
+                </div>
+              </div>
+              <div class="product-price">
+                <div class="price-amount">
+                  <%= number_to_currency(order_item.seller_product.price * order_item.quantity, unit: "₺",format: "%n%u", separator: ",", delimiter: ".") %>      
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        
+        <div class="order-footer">
+          <% unless order.status == "cancelled" || order.status == "refunded" %>
+          <%= button_to "Siparişi İptal Et", cancel_order_path(order), method: :patch,
+                    data: { confirm: "Siparişi iptal etmek istediğinize emin misiniz?" },
+                    class: 'inline-block bg-red-600 text-black font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition duration-200' %>
+          <%= button_to "Siparişi İade Et", refund_order_path(order), method: :patch,
+          data: { confirm: "Siparişi iade etmek istediğinize emin misiniz?" },
+          class: 'inline-block bg-red-600 text-black font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition duration-200' %>
+          <div class="order-date">
+            <%end%>
+            📅 <%= first_item.order.created_at.strftime("%d.%m.%Y %H:%M") %>
+          </div>
+          <div class="total-amount">
+            Toplam: <%= number_to_currency(items.sum { |item| item.seller_product.price * item.quantity }, unit: "₺",format: "%n%u",   separator: ",", delimiter: ".") %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+       
+  <% else %>
+    <div class="alert alert-info text-center mt-5" role="alert">
+      Henüz siparişiniz bulunmamaktadır.
+    </div>
+  <% end %>
+</div>
+
+<style>
+  .order-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+  
+  .order-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .order-id {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  .order-body {
+    padding: 0;
+  }
+  
+  .product-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .product-info {
+    flex: 1;
+  }
+  
+  .product-name {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+  }
+  
+  .product-details {
+    color: #6c757d;
+    font-size: 0.9em;
+  }
+  
+  .product-price {
+    text-align: right;
+    min-width: 120px;
+  }
+  
+  .price-amount {
+    font-weight: 700;
+    color: #27ae60;
+    font-size: 1.1em;
+  }
+  
+  .quantity-badge {
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+  }
+  
+  .order-footer {
+    background-color: #f8f9fa;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .order-date {
+    color: #6c757d;
+    font-size: 0.9em;
+  }
+  
+  .total-amount {
+    font-weight: 700;
+    font-size: 1.2em;
+    color: #2c3e50;
+  }
+</style>

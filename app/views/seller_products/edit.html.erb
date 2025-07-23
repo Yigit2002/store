@@ -1,0 +1,28 @@
+<!-- app/views/seller_products/edit.html.erb -->
+<h2 class="text-2xl font-semibold text-gray-800 mb-6">Ürünü Düzenle</h2>
+
+<%= form_with model: @seller_product, local: true do |form| %>
+  <div class="mb-4">
+    <%= form.label :name, "İsim", class: "block text-gray-700 font-medium mb-2" %>
+    <p class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"><%= @seller_product.product.name %></p>
+  </div>
+
+  <div>
+    <%= form.label :price, "Fiyat (₺)", class: "block text-gray-700 font-semibold mb-2"%>
+    <%= form.number_field :price, step: 0.01,  class: "w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-gray-100 text-gray-800 placeholder-gray-400" %>
+  </div>
+  <br>
+
+  <div>
+    <%= form.label :stock, "Stok Miktarı", class: "block text-gray-700 font-medium mb-2" %>
+    <%= form.number_field :stock, class: "w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500", style: "display: block" %>
+  </div>
+  <br>
+
+  <div>
+    <%= form.submit "Güncelle", class: "bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition cursor-pointer" %>
+    <a href="<%= seller_products_path %>" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition text-center">İptal Et</a>
+  </div>
+<% end %>
+
+

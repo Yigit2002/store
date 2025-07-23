@@ -1,0 +1,35 @@
+<h1 class="text-2xl font-bold text-gray-900 mb-6">Kartlarım</h1>
+<% if @cards.any? %>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kart Adı</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kart Numarası</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Son Kullanma Tarihi</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bakiye</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlem</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% @cards.each do |card| %>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap"><%= card.name %></td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= card.number %></td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= card.expiry_date.strftime("%m/%Y") %></td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= number_to_currency(card.balance, unit: "₺") %></td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <%= link_to "Sil", card_path(card), data: { turbo_method: :delete, turbo_confirm: "Bu kartı silmek istediğinizden emin misiniz?" }, class: "text-red-600 hover:text-red-900" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="text-gray-600">Henüz kart eklemediniz.</p>
+<% end %>
+<div class="mt-6">
+    <br><br>
+  <%= link_to "Yeni Kart Ekle", new_card_path, class: "bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition-colors" %>
+</div>

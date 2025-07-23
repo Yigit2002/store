@@ -1,0 +1,25 @@
+<h1 class="text-2xl font-bold text-gray-900 mb-6">Tüm Kartlar</h1>
+<div class="overflow-x-auto">
+  <table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kullanıcı</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kart Adı</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bakiye</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlem</th>
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      <% @cards.each do |card| %>
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap"><%= card.user.email_address %></td>
+          <td class="px-6 py-4 whitespace-nowrap"><%= card.name %></td>
+          <td class="px-6 py-4 whitespace-nowrap"><%= number_to_currency(card.balance, unit: "₺") %></td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <%= link_to "Bakiye Güncelle", edit_balance_card_path(card), class: "text-indigo-600 hover:text-indigo-900" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

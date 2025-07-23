@@ -6,10 +6,10 @@ class ProductTest < ActiveSupport::TestCase
   test "Stok yenilendiğinde email üzerinden bilgilendir." do
     product = products(:tshirt)
 
-    product.update(inventory_count: 0)
+    product.update(stock: 0)
 
     assert_emails 1 do
-      product.update(inventory_count: 99)
+      product.update(stock: 99)
     end
   end
 end

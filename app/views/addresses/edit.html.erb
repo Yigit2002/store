@@ -1,0 +1,33 @@
+<div class="max-w-lg mx-auto">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Adresi Düzenle</h1>
+  <%= form_with model: @address, local: true, class: "space-y-4" do |form| %>
+    <div>
+      <%= form.label :title, "Başlık", class: "block text-gray-700 font-medium mb-1" %>
+      <%= form.text_field :title, class: "w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder: "Evim, İşyerim vb." %>
+      <% if @address.errors[:title].any? %>
+        <p class="text-red-500 text-sm mt-1"><%= @address.errors[:title].first %></p>
+      <% end %>
+    </div>
+    <div class="mb-4">
+       <%= form.label :city, "Şehir", class: "block mb-1" %>
+        <%= form.text_field :city, class: "w-full p-2 border rounded" %>
+    </div>
+
+    <div class="mb-4">
+      <%= form.label :country, "Ülke", class: "block mb-1" %>
+      <%= form.text_field :country, class: "w-full p-2 border rounded" %>
+    </div>
+    <div>
+      <%= form.label :body, "Adres", class: "block text-gray-700 font-medium mb-1" %>
+      <%= form.text_area :body, class: "w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500", rows: 4, placeholder: "Adres detaylarını girin..." %>
+      
+      <% if @address.errors[:body].any? %>
+        <p class="text-red-500 text-sm mt-1"><%= @address.errors[:body].first %></p>
+      <% end %>
+    </div>
+    <div class="flex space-x-2">
+      <%= form.submit "Değişiklikleri Kaydet", class: "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors" %>
+      <%= link_to "İptal", addresses_path, class: "bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors" %>
+    </div>
+  <% end %>
+</div>
