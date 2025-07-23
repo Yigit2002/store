@@ -1,4 +1,5 @@
 class CategoriesController < ApplicationController
+  before_action :ensure_admin, only: [:index, :new]
 
   def index
     @categories = Category.all
@@ -10,7 +11,7 @@ class CategoriesController < ApplicationController
 
   def create
     @category = Category.new(category_params)
-    if @category.save
+    if @category.savess
       redirect_to categories_path, notice: "Kategori başarıyla eklendi."
     else
       render :new, status: :unprocessable_entity
@@ -24,7 +25,7 @@ class CategoriesController < ApplicationController
   end
 
   def ensure_admin
-    unless current_user&.admin?
+    unless Current.user&.admin?
       redirect_to root_path, alert: "Bu işlem için admin yetkisi gereklidir."
     end
   end

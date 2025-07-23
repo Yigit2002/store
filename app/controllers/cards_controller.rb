@@ -32,12 +32,17 @@ class CardsController < ApplicationController
   end
 
   def update_balance
-    if @card.update(balance: params[:card][:balance])
-      flash[:notice] = "Bakiye başarıyla güncellendi."
-      redirect_to admin_cards_path
+    @card = Card.find_by(id: params[:id])
+    
+    if @card.nil?
+      redirect_to users_path, alert: "Kart bulunamadı."
+      return
+    end
+    
+    if @card.update(balance: params[:balance])
+      redirect_to users_path, notice: "Bakiye başarıyla güncellendi."
     else
-      flash[:alert] = "Bakiye güncellenemedi."
-      render :edit_balance
+      redirect_to users_path, alert: "Bakiye güncellenirken hata oluştu."
     end
   end
 
